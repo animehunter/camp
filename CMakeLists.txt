@@ -191,6 +191,11 @@ if(BUILD_TEST)
     add_subdirectory(test)
 endif()
 
+# add the camp-lua subdirectory, but do not build it by default
+if(BUILD_LUA)
+    add_subdirectory(module/camp-lua)
+endif()
+
 ###############################
 # doc
 ###############################
