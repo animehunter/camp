@@ -65,6 +65,11 @@ camp::Value valueFromLua(lua_State* L, int index)
         v = lua_tonumber(L, index);
     else if (lua_isstring(L, index))
         v = lua_tostring(L, index);
+    else if (lua_isuserdata(L, index))
+    {
+        camp::UserObject* userdata = static_cast<camp::UserObject*>(lua_touserdata(L, index));
+        v = *userdata;
+    }
     // TODO handle other types
     return v;
 }
