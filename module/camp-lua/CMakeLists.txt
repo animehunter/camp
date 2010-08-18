@@ -28,6 +28,8 @@ project(CAMP_LUA)
 
 # all source files
 set(CAMP_LUA_SRCS
+    include/camp-lua/valuetoluavisitor.hpp
+    src/valuetoluavisitor.cpp
     include/camp-lua/conversion.hpp
     src/conversion.cpp
     include/camp-lua/object.hpp

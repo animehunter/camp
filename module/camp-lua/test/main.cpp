@@ -85,8 +85,8 @@ int main(int argc, char** argv)
 
     c1.executeString("print(\"----\")");
     c1.executeString("a.boolean = true; a.integer = 3; a.real = 6.7; a.string = \"pouet\"");
-    c1.executeString("print(a.boolean, a.integer, a.real, a.string)");
     c1.executeString("b:setBoolean(false); b:setInteger(8); b:setReal(9.1); b:setString(\"youpi\")");
+    c1.executeString("print(a.boolean, a.integer, a.real, a.string)");
     c1.executeString("print(b.boolean, b.integer, b.real, b.string)");
 
     c1.executeString("print(\"----\")");
