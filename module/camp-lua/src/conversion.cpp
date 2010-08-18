@@ -116,7 +116,7 @@ void ValueToLuaVisitor::operator()(const camp::UserObject& value)
     // Create a userdata to hold the user object
     camp::UserObject* userdata = static_cast<camp::UserObject*>(lua_newuserdata(m_L,
                 sizeof(camp::UserObject)));
-    *userdata = value;
+    new (userdata) camp::UserObject(value); // Call the placement 'new' operator
 
     // Create the table to be used as metatable
     // Pre-allocated space for 2 non-array elements (__index and __newindex)
