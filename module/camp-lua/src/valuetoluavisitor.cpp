@@ -25,10 +25,7 @@
 #include <camp/class.hpp>
 #include <camp/property.hpp>
 #include <camp/function.hpp>
-#include <camp/invalidobject.hpp>
-#include <camp/invalidaccess.hpp>
-#include <camp/invalidproperty.hpp>
-#include <camp/invalidfunction.hpp>
+#include <camp/error.hpp>
 #include <lua.hpp>
 
 namespace
@@ -166,36 +163,9 @@ int indexCallback(lua_State* L)
 
         return 1; // One value returned
     }
-    catch (const camp::InvalidObject&)
+    catch (const camp::Error& err)
     {
-        // The userdata has an invalid value
-        // This should not happen
-        return luaL_error(L, "Invalid userdata value");
-    }
-    catch (const camp::InvalidAccess&)
-    {
-        // The property is not readable
-        return luaL_error(L, "Property not readable");
-    }
-    catch (const camp::InvalidProperty&)
-    {
-        // No property with the desired name
-        try
-        {
-            // Try to retrieve a function
-            const camp::Function& function = metaclass.function(key);
-
-            // Push the callback function onto the stack
-            // The function to be called is added to the C closure
-            lua_pushlightuserdata(L, const_cast<camp::Function*>(&function));
-            lua_pushcclosure(L, &callCallback, 1);
-
-            return 1; // One value returned (the C closure)
-        } catch (const camp::InvalidFunction&)
-        {
-            // No property nor function with the requested name
-            return luaL_error(L, "Invalid key '%s'", key.c_str());
-        }
+        return luaL_error(L, err.what());
     }
 
     return 0;
@@ -231,26 +201,9 @@ int newIndexCallback(lua_State* L)
 
         return 0; // No value returned
     }
-    catch (const camp::InvalidObject&)
+    catch (const camp::Error& err)
     {
-        // The userdata has an invalid value
-        // This should not happen
-        return luaL_error(L, "Invalid userdata value");
-     }
-    catch (const camp::InvalidAccess&)
-    {
-        // The property is not writable
-        return luaL_error(L, "Property not writable");
-    }
-    catch (const camp::InvalidValue&)
-    {
-        // The new value can't be converted to the property's type
-        return luaL_error(L, "New value cannot be converted to the property's type");
-    }
-    catch (const camp::InvalidProperty&)
-    {
-        // No property with the desired name
-        return luaL_error(L, "Invalid key '%s'", key.c_str());
+        return luaL_error(L, err.what());
     }
 
     return 0;
@@ -296,21 +249,9 @@ int callCallback(lua_State* L)
             return 1;
         }
     }
-    catch (const camp::InvalidObject&)
+    catch (const camp::Error& err)
     {
-        // The userdata has an invalid value
-        // This should not happen
-        return luaL_error(L, "Invalid userdata value");
-     }
-    catch (const camp::InvalidAccess&)
-    {
-        // The function is not writable
-        return luaL_error(L, "Function not callable");
-    }
-    catch (const camp::InvalidArgument&)
-    {
-        // An argument can't be converted to the requested type
-        return luaL_error(L, "An argument cannot be converted to the needed type");
+        return luaL_error(L, err.what());
     }
 
     return 0;

@@ -30,10 +30,7 @@ namespace camp
 //-------------------------------------------------------------------------------------------------
 void* classCast(void* pointer, const Class& sourceClass, const Class& targetClass)
 {
-    if (sourceClass.applyOffset(pointer, targetClass))
-        return pointer;
-    else
-        return 0;
+    return sourceClass.applyOffset(pointer, targetClass);
 }
 
 } // namespace camp

@@ -22,9 +22,9 @@
 
 
 #include <camp/class.hpp>
-#include <camp/invalidindex.hpp>
-#include <camp/invalidfunction.hpp>
-#include <camp/invalidproperty.hpp>
+#include <camp/errors.hpp>
+#include <camp/userobject.hpp>
+#include <camp/detail/classmanager.hpp>
 
 
 namespace camp
@@ -44,8 +44,9 @@ std::size_t Class::baseCount() const
 //-------------------------------------------------------------------------------------------------
 const Class& Class::base(std::size_t index) const
 {
+    // Make sure that the index is not out of range
     if (index >= m_bases.size())
-        CAMP_ERROR(InvalidIndex(index, m_bases.size()));
+        CAMP_ERROR(OutOfRange(index, m_bases.size()));
 
     return *m_bases[index].base;
 }
@@ -53,108 +54,137 @@ const Class& Class::base(std::size_t index) const
 //-------------------------------------------------------------------------------------------------
 std::size_t Class::functionCount() const
 {
-    return m_functionsByIndex.size();
+    return m_functions.size();
 }
 
 //-------------------------------------------------------------------------------------------------
 bool Class::hasFunction(const std::string& name) const
 {
-    return m_functions.find(name) != m_functions.end();
+    const FunctionNameIndex& names = m_functions.get<Name>();
+
+    return names.find(name) != names.end();
 }
 
 //-------------------------------------------------------------------------------------------------
 const Function& Class::function(std::size_t index) const
 {
-    if (index >= m_functionsByIndex.size())
-        CAMP_ERROR(InvalidIndex(index, m_functionsByIndex.size()));
+    // Make sure that the index is not out of range
+    if (index >= m_functions.size())
+        CAMP_ERROR(OutOfRange(index, m_functions.size()));
 
-    return *m_functionsByIndex[index];
+    return *m_functions[index];
 }
 
 //-------------------------------------------------------------------------------------------------
 const Function& Class::function(const std::string& name) const
 {
-    FunctionTable::const_iterator it = m_functions.find(name);
-    if (it == m_functions.end())
-        CAMP_ERROR(InvalidFunction(name.c_str(), *this));
+    const FunctionNameIndex& names = m_functions.get<Name>();
 
-    return *it->second;
+    FunctionNameIndex::const_iterator it = names.find(name);
+    if (it == names.end())
+        CAMP_ERROR(FunctionNotFound(name, m_name));
+
+    return **it;
 }
 
 //-------------------------------------------------------------------------------------------------
 std::size_t Class::propertyCount() const
 {
-    return m_propertiesByIndex.size();
+    return m_properties.size();
 }
 
 //-------------------------------------------------------------------------------------------------
 bool Class::hasProperty(const std::string& name) const
 {
-    return m_properties.find(name) != m_properties.end();
+    const PropertyNameIndex& names = m_properties.get<Name>();
+
+    return names.find(name) != names.end();
 }
 
 //-------------------------------------------------------------------------------------------------
 const Property& Class::property(std::size_t index) const
 {
-    if (index >= m_propertiesByIndex.size())
-        CAMP_ERROR(InvalidIndex(index, m_propertiesByIndex.size()));
+    // Make sure that the index is not out of range
+    if (index >= m_properties.size())
+        CAMP_ERROR(OutOfRange(index, m_properties.size()));
 
-    return *m_propertiesByIndex[index];
+    return *m_properties[index];
 }
 
 //-------------------------------------------------------------------------------------------------
 const Property& Class::property(const std::string& name) const
 {
-    PropertyTable::const_iterator it = m_properties.find(name);
-    if (it == m_properties.end())
-        CAMP_ERROR(InvalidProperty(name.c_str(), *this));
+    const PropertyNameIndex& names = m_properties.get<Name>();
 
-    return *it->second;
+    PropertyNameIndex::const_iterator it = names.find(name);
+    if (it == names.end())
+        CAMP_ERROR(PropertyNotFound(name, m_name));
+
+    return **it;
+}
+
+//-------------------------------------------------------------------------------------------------
+UserObject Class::construct(const Args& args) const
+{
+    // Search an arguments match among the list of available constructors
+    ConstructorList::const_iterator end = m_constructors.end();
+    for (ConstructorList::const_iterator it = m_constructors.begin();
+         it != end;
+         ++it)
+    {
+        Constructor& constructor = **it;
+        if (constructor.matches(args))
+        {
+            // Match found: use the constructor to create the new instance
+            return constructor.create(args);
+        }
+    }
+
+    // No match found
+    return UserObject::nothing;
+}
+
+//-------------------------------------------------------------------------------------------------
+void Class::destroy(const UserObject& object) const
+{
+    m_destructor(object);
 }
 
 //-------------------------------------------------------------------------------------------------
 void Class::visit(ClassVisitor& visitor) const
 {
     // First visit properties
-    PropertyArray::const_iterator propEnd = m_propertiesByIndex.end();
-    for (PropertyArray::const_iterator it = m_propertiesByIndex.begin(); it != propEnd; ++it)
+    for (PropertyTable::const_iterator it = m_properties.begin(); it != m_properties.end(); ++it)
     {
         (*it)->accept(visitor);
     }
 
     // Then visit functions
-    FunctionArray::const_iterator funcEnd = m_functionsByIndex.end();
-    for (FunctionArray::const_iterator it = m_functionsByIndex.begin(); it != funcEnd; ++it)
+    for (FunctionTable::const_iterator it = m_functions.begin(); it != m_functions.end(); ++it)
     {
         (*it)->accept(visitor);
     }
 }
 
 //-------------------------------------------------------------------------------------------------
-bool Class::applyOffset(void*& pointer, const Class& target) const
+void* Class::applyOffset(void* pointer, const Class& target) const
 {
     // Special case for null pointers: don't apply offset to leave them null
     if (!pointer)
-        return true;
+        return pointer;
 
     // Check target as a base class of this
     int offset = baseOffset(target);
     if (offset != -1)
-    {
-        pointer = static_cast<void*>(static_cast<char*>(pointer) + offset);
-        return true;
-    }
+        return static_cast<void*>(static_cast<char*>(pointer) + offset);
 
     // Check target as a derived class of this
     offset = target.baseOffset(*this);
     if (offset != -1)
-    {
-        pointer = static_cast<void*>(static_cast<char*>(pointer) - offset);
-        return true;
-    }
+        return static_cast<void*>(static_cast<char*>(pointer) - offset);
 
     // No match found, target is not a base class nor a derived class of this
-    return false;
+    CAMP_ERROR(ClassUnrelated(name(), target.name()));
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -183,8 +213,8 @@ int Class::baseOffset(const Class& base) const
         return 0;
 
     // Search base in the base classes
-    std::vector<BaseInfo>::const_iterator end = m_bases.end();
-    for (std::vector<BaseInfo>::const_iterator it = m_bases.begin(); it != end; ++it)
+    BaseList::const_iterator end = m_bases.end();
+    for (BaseList::const_iterator it = m_bases.begin(); it != end; ++it)
     {
         int offset = it->base->baseOffset(base);
         if (offset != -1)

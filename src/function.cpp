@@ -23,9 +23,7 @@
 
 #include <camp/function.hpp>
 #include <camp/classvisitor.hpp>
-#include <camp/invalidindex.hpp>
-#include <camp/invalidaccess.hpp>
-#include <camp/invalidargument.hpp>
+#include <camp/errors.hpp>
 
 
 namespace camp
@@ -56,8 +54,9 @@ Type Function::returnType() const
 //-------------------------------------------------------------------------------------------------
 Type Function::argType(std::size_t index) const
 {
+    // Make sure that the index is not out of range
     if (index >= m_argTypes.size())
-        CAMP_ERROR(InvalidIndex(index, m_argTypes.size()));
+        CAMP_ERROR(OutOfRange(index, m_argTypes.size()));
 
     return m_argTypes[index];
 }
@@ -73,11 +72,11 @@ Value Function::call(const UserObject& object, const Args& args) const
 {
     // Check if the function is callable
     if (!callable(object))
-        CAMP_ERROR(InvalidAccess(m_name.c_str(), InvalidAccess::Call));
+        CAMP_ERROR(ForbiddenCall(name()));
 
-    // Check the arguments count
+    // Check the number of arguments
     if (args.count() < m_argTypes.size())
-        CAMP_ERROR(InvalidArgument(noType, m_argTypes[args.count()], m_name.c_str(), args.count()));
+        CAMP_ERROR(NotEnoughArguments(name(), args.count(), m_argTypes.size()));
 
     // Execute the function
     return execute(object, args);

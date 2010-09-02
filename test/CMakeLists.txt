@@ -29,7 +29,36 @@ project(CAMP_TEST)
 # all source files
 set(CAMP_TEST_SRCS
     main.cpp
-    test.hpp
+    arrayproperty.cpp
+    arrayproperty.hpp
+    class.cpp
+    class.hpp
+    enum.cpp
+    enum.hpp
+    enumobject.cpp
+    enumobject.hpp
+    enumproperty.cpp
+    enumproperty.hpp
+    tagholder.cpp
+    tagholder.hpp
+    value.cpp
+    value.hpp
+    property.cpp
+    property.hpp
+    classvisitor.cpp
+    classvisitor.hpp
+    constructor.cpp
+    constructor.hpp
+    mapper.cpp
+    mapper.hpp
+    inheritance.cpp
+    inheritance.hpp
+    userobject.cpp
+    userobject.hpp
+    propertyaccess.cpp
+    propertyaccess.hpp
+    functionaccess.cpp
+    functionaccess.hpp
 )
 
 # find Boost
@@ -45,6 +74,9 @@ include_directories(
 link_directories(
     ${CAMP_BINARY_DIR}
 )
+
+# no implicit link to boost.test library
+add_definitions(-DBOOST_TEST_NO_LIB)
 
 # instruct CMake to build an executable from all of the source files
 add_executable(camptest ${CAMP_TEST_SRCS})

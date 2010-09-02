@@ -29,9 +29,13 @@
 #include <camp/detail/observernotifier.hpp>
 #include <boost/noncopyable.hpp>
 #include <boost/shared_ptr.hpp>
-#include <map>
+#include <boost/multi_index_container.hpp>
+#include <boost/multi_index/member.hpp>
+#include <boost/multi_index/ordered_index.hpp>
 #include <string>
 
+
+namespace bm = boost::multi_index;
 
 namespace camp
 {
@@ -69,7 +73,7 @@ public:
      *
      * \return Reference to the new metaenum
      */
-    Enum& registerNew(const std::string& name, const std::string& id);
+    Enum& addClass(const std::string& name, const std::string& id);
 
     /**
      * \brief Get the total number of metaenums
@@ -88,7 +92,7 @@ public:
      *
      * \return Reference to the index-th metaenum
      *
-     * \throw InvalidIndex index is out of range
+     * \throw OutOfRange index is out of range
      */
     const Enum& getByIndex(std::size_t index) const;
 
@@ -99,7 +103,7 @@ public:
      *
      * \return Reference to the requested metaenum
      *
-     * \throw InvalidEnum name is not the name of an existing metaenum
+     * \throw EnumNotFound name is not the name of an existing metaenum
      */
     const Enum& getByName(const std::string& name) const;
 
@@ -110,7 +114,7 @@ public:
      *
      * \return Reference to the requested metaenum
      *
-     * \throw InvalidEnum id is not the name of an existing metaenum
+     * \throw EnumNotFound id is not the name of an existing metaenum
      */
     const Enum& getById(const std::string& id) const;
 
@@ -149,12 +153,29 @@ private:
      */
     ~EnumManager();
 
-    typedef boost::shared_ptr<Enum> EnumPtr;
-    typedef std::map<std::string, EnumPtr> EnumByNameTable;
-    typedef std::map<std::string, EnumPtr> EnumByIdTable;
+    /**
+     * \brief Structure gathering an enum, its type identifier and its name
+     */
+    struct EnumInfo
+    {
+        std::string id;
+        std::string name;
+        boost::shared_ptr<Enum> enumPtr;
+    };
 
-    EnumByNameTable m_byName; ///< List of metaenums sorted by name
-    EnumByIdTable m_byId; ///< List of metaenums sorted by class id
+    struct Id;
+    struct Name;
+
+    typedef boost::multi_index_container<EnumInfo,
+        bm::indexed_by<bm::ordered_unique<bm::tag<Id>,   bm::member<EnumInfo, std::string, &EnumInfo::id> >,
+                       bm::ordered_unique<bm::tag<Name>, bm::member<EnumInfo, std::string, &EnumInfo::name> >
+        >
+    > EnumTable;
+
+    typedef EnumTable::index<Id>::type IdIndex;
+    typedef EnumTable::index<Name>::type NameIndex;
+
+    EnumTable m_enums; ///< Table storing enums indexed by their id and name
 };
 
 } // namespace detail

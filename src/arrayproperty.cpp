@@ -23,10 +23,7 @@
 
 #include <camp/arrayproperty.hpp>
 #include <camp/classvisitor.hpp>
-#include <camp/invalidaccess.hpp>
-#include <camp/invalidobject.hpp>
-#include <camp/invalidvalue.hpp>
-#include <camp/invalidindex.hpp>
+#include <camp/errors.hpp>
 
 
 namespace camp
@@ -61,7 +58,7 @@ std::size_t ArrayProperty::size(const UserObject& object) const
 {
     // Check if the property is readable
     if (!readable(object))
-        CAMP_ERROR(InvalidAccess(name().c_str(), InvalidAccess::Read));
+        CAMP_ERROR(ForbiddenRead(name()));
 
     return getSize(object);
 }
@@ -71,11 +68,11 @@ void ArrayProperty::resize(const UserObject& object, std::size_t newSize) const
 {
     // Check if the array is dynamic
     if (!dynamic())
-        CAMP_ERROR(InvalidAccess(name().c_str(), InvalidAccess::Write));
+        CAMP_ERROR(ForbiddenWrite(name()));
 
     // Check if the property is writable
     if (!writable(object))
-        CAMP_ERROR(InvalidAccess(name().c_str(), InvalidAccess::Write));
+        CAMP_ERROR(ForbiddenWrite(name()));
 
     setSize(object, newSize);
 }
@@ -85,12 +82,12 @@ Value ArrayProperty::get(const UserObject& object, std::size_t index) const
 {
     // Check if the property is readable
     if (!readable(object))
-        CAMP_ERROR(InvalidAccess(name().c_str(), InvalidAccess::Read));
+        CAMP_ERROR(ForbiddenRead(name()));
 
-    // Check if the index is in range
+    // Make sure that the index is not out of range
     std::size_t range = size(object);
     if (index >= range)
-        CAMP_ERROR(InvalidIndex(index, range));
+        CAMP_ERROR(OutOfRange(index, range));
 
     return getElement(object, index);
 }
@@ -100,12 +97,12 @@ void ArrayProperty::set(const UserObject& object, std::size_t index, const Value
 {
     // Check if the property is writable
     if (!writable(object))
-        CAMP_ERROR(InvalidAccess(name().c_str(), InvalidAccess::Write));
+        CAMP_ERROR(ForbiddenWrite(name()));
 
     // Check if the index is in range
     std::size_t range = size(object);
     if (index >= range)
-        CAMP_ERROR(InvalidIndex(index, range));
+        CAMP_ERROR(OutOfRange(index, range));
 
     return setElement(object, index, value);
 }
@@ -115,16 +112,16 @@ void ArrayProperty::insert(const UserObject& object, std::size_t before, const V
 {
     // Check if the array is dynamic
     if (!dynamic())
-        CAMP_ERROR(InvalidAccess(name().c_str(), InvalidAccess::Write));
+        CAMP_ERROR(ForbiddenWrite(name()));
 
     // Check if the property is writable
     if (!writable(object))
-        CAMP_ERROR(InvalidAccess(name().c_str(), InvalidAccess::Write));
+        CAMP_ERROR(ForbiddenWrite(name()));
 
     // Check if the index is in range
     std::size_t range = size(object) + 1;
     if (before >= range)
-        CAMP_ERROR(InvalidIndex(before, range));
+        CAMP_ERROR(OutOfRange(before, range));
 
     return insertElement(object, before, value);
 }
@@ -134,16 +131,16 @@ void ArrayProperty::remove(const UserObject& object, std::size_t index) const
 {
     // Check if the array is dynamic
     if (!dynamic())
-        CAMP_ERROR(InvalidAccess(name().c_str(), InvalidAccess::Write));
+        CAMP_ERROR(ForbiddenWrite(name()));
 
     // Check if the property is writable
     if (!writable(object))
-        CAMP_ERROR(InvalidAccess(name().c_str(), InvalidAccess::Write));
+        CAMP_ERROR(ForbiddenWrite(name()));
 
     // Check if the index is in range
     std::size_t range = size(object);
     if (index >= range)
-        CAMP_ERROR(InvalidIndex(index, range));
+        CAMP_ERROR(OutOfRange(index, range));
 
     return removeElement(object, index);
 }

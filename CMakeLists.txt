@@ -45,30 +45,8 @@ set(CAMP_SRCS
     src/property.cpp
     include/camp/observer.hpp
     src/observer.cpp
-    include/camp/invalidconstruction.hpp
-    src/invalidconstruction.cpp
-    include/camp/invalidvalue.hpp
-    src/invalidvalue.cpp
-    include/camp/invalidproperty.hpp
-    src/invalidproperty.cpp
-    include/camp/invalidobject.hpp
-    src/invalidobject.cpp
-    include/camp/invalidindex.hpp
-    src/invalidindex.cpp
-    include/camp/invalidfunction.hpp
-    src/invalidfunction.cpp
-    include/camp/invalidenumvalue.hpp
-    src/invalidenumvalue.cpp
-    include/camp/invalidenumname.hpp
-    src/invalidenumname.cpp
-    include/camp/invalidenum.hpp
-    src/invalidenum.cpp
-    include/camp/invalidclass.hpp
-    src/invalidclass.cpp
-    include/camp/invalidargument.hpp
-    src/invalidargument.cpp
-    include/camp/invalidaccess.hpp
-    src/invalidaccess.cpp
+    include/camp/errors.hpp
+    src/errors.cpp
     include/camp/function.hpp
     src/function.cpp
     include/camp/error.hpp

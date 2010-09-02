@@ -27,23 +27,29 @@
 
 #include <camp/config.hpp>
 #include <camp/args.hpp>
-#include <camp/error.hpp>
-#include <camp/invalidconstruction.hpp>
+#include <camp/classget.hpp>
+#include <camp/classcast.hpp>
+#include <camp/property.hpp>
+#include <camp/function.hpp>
 #include <camp/tagholder.hpp>
+#include <camp/errors.hpp>
+#include <camp/userobject.hpp>
 #include <camp/detail/classmanager.hpp>
 #include <camp/detail/typeid.hpp>
 #include <boost/noncopyable.hpp>
 #include <boost/shared_ptr.hpp>
-#include <map>
+#include <boost/multi_index_container.hpp>
+#include <boost/multi_index/mem_fun.hpp>
+#include <boost/multi_index/ordered_index.hpp>
+#include <boost/multi_index/random_access_index.hpp>
 #include <string>
 
+
+namespace bm = boost::multi_index;
 
 namespace camp
 {
 template <typename T> class ClassBuilder;
-class UserObject;
-class Property;
-class Function;
 class Constructor;
 class Value;
 class ClassVisitor;
@@ -71,7 +77,7 @@ class ClassVisitor;
  *
  * camp::Class::declare<MyClass>("MyClass")
  *     .tag("help", "this is my class")
- *     .constructor()
+ *     .constructor0()
  *     .property("prop", &MyClass::getProp, &MyClass::setProp)
  *     .function("func", &MyClass::func);
  * \endcode
@@ -145,7 +151,7 @@ public:
      *
      * \return Reference to the index-th base metaclass of this metaclass
      *
-     * \throw camp::InvalidIndex index is out of range
+     * \throw OutOfRange index is out of range
      */
     const Class& base(std::size_t index) const;
 
@@ -172,7 +178,7 @@ public:
      *
      * \return Reference to the function
      *
-     * \throw camp::InvalidIndex index is out of range
+     * \throw OutOfRange index is out of range
      */
     const Function& function(std::size_t index) const;
 
@@ -183,7 +189,7 @@ public:
      *
      * \return Reference to the function
      *
-     * \throw camp::InvalidFunction name doesn't exist in the metaclass
+     * \throw FunctionNotFound \a name is not a function of the metaclass
      */
     const Function& function(const std::string& name) const;
 
@@ -210,7 +216,7 @@ public:
      *
      * \return Reference to the property
      *
-     * \throw camp::InvalidIndex index is out of range
+     * \throw OutOfRange index is out of range
      */
     const Property& property(std::size_t index) const;
 
@@ -221,39 +227,33 @@ public:
      *
      * \return Reference to the property
      *
-     * \throw camp::InvalidProperty name doesn't exist in the metaclass
+     * \throw PropertyNotFound \a name is not a property of the metaclass
      */
     const Property& property(const std::string& name) const;
 
     /**
      * \brief Construct a new instance of the C++ class bound to the metaclass
      *
-     * The template parameter T is the target C++ type. It can be the class bound
-     * to the metaclass, one of its base classes, or void. The returned instance
-     * must be destroyed with the Class::destroy function.
+     * If no constructor can match the provided arguments, UserObject::nothing
+     * is returned.
+     * The new instance is wrapped into a UserObject. It must be destroyed
+     * with the Class::destroy function.
      *
      * \param args Arguments to pass to the constructor (empty by default)
      *
-     * \return Pointer to the new instance, or 0 if it failed
-     *
-     * \throw camp::InvalidConstructor no matching constructor was found
+     * \return New instance wrapped into a UserObject, or UserObject::nothing if it failed
      */
-    template <typename T>
-    T* construct(const Args& args = Args::empty) const;
+    UserObject construct(const Args& args = Args::empty) const;
 
     /**
      * \brief Destroy an instance of the C++ class bound to the metaclass
      *
      * This function must be called to destroy every instance created with
-     * Class::construct. The object to destroy must be properly typed
-     * (i.e. not be void*) so that its destructor gets called
+     * Class::construct.
      *
-     * \param object Pointer to the object to destroyed
-     *
-     * \return Pointer to the new instance, or 0 if it failed
+     * \param object Object to be destroyed
      */
-    template <typename T>
-    void destroy(const T* object) const;
+    void destroy(const UserObject& object) const;
 
     /**
      * \brief Start visitation of a class
@@ -270,9 +270,11 @@ public:
      * \param pointer Pointer to convert
      * \param target Target metaclass to convert to
      *
-     * \return True if the conversion was properly done, false on error
+     * \return Converted pointer
+     *
+     * \throw ClassUnrelated \a target is not a base nor a derived class of this
      */
-    bool applyOffset(void*& pointer, const Class& target) const;
+    void* applyOffset(void* pointer, const Class& target) const;
 
     /**
      * \brief Operator == to check equality between two metaclasses
@@ -327,23 +329,36 @@ private:
     };
 
     typedef boost::shared_ptr<Property> PropertyPtr;
-    typedef std::map<std::string, PropertyPtr> PropertyTable;
-    typedef std::vector<PropertyPtr> PropertyArray;
-
     typedef boost::shared_ptr<Function> FunctionPtr;
-    typedef std::map<std::string, FunctionPtr> FunctionTable;
-    typedef std::vector<FunctionPtr> FunctionArray;
-
     typedef boost::shared_ptr<Constructor> ConstructorPtr;
     typedef std::vector<ConstructorPtr> ConstructorList;
+    typedef std::vector<BaseInfo> BaseList;
+
+    struct Id;
+    struct Name;
+
+    typedef boost::multi_index_container<PropertyPtr,
+        bm::indexed_by<bm::random_access<bm::tag<Id> >,
+                       bm::ordered_unique<bm::tag<Name>, bm::const_mem_fun<Property, const std::string&, &Property::name> >
+        >
+    > PropertyTable;
+
+    typedef boost::multi_index_container<FunctionPtr,
+        bm::indexed_by<bm::random_access<bm::tag<Id> >,
+                       bm::ordered_unique<bm::tag<Name>, bm::const_mem_fun<Function, const std::string&, &Function::name> >
+        >
+    > FunctionTable;
+
+    typedef PropertyTable::index<Name>::type PropertyNameIndex;
+    typedef FunctionTable::index<Name>::type FunctionNameIndex;
+    typedef void (*Destructor)(const UserObject&);
 
     std::string m_name; ///< Name of the metaclass
-    std::vector<BaseInfo> m_bases; ///< List of base metaclasses
-    FunctionTable m_functions; ///< List of metafunctions sorted by name
-    FunctionArray m_functionsByIndex; ///< List of metafunctions sorted by index
-    PropertyTable m_properties; ///< List of metaproperties sorted by name
-    PropertyArray m_propertiesByIndex; ///< List of metaproperties sorted by index
+    FunctionTable m_functions; ///< Table of metafunctions indexed by name
+    PropertyTable m_properties; ///< Table of metaproperties indexed by name
+    BaseList m_bases; ///< List of base metaclasses
     ConstructorList m_constructors; ///< List of metaconstructors
+    Destructor m_destructor; ///< Destructor (function that is able to delete an abstract object)
 };
 
 } // namespace camp

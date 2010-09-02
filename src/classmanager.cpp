@@ -23,10 +23,8 @@
 
 #include <camp/detail/classmanager.hpp>
 #include <camp/class.hpp>
-#include <camp/invalidclass.hpp>
-#include <camp/invalidindex.hpp>
+#include <camp/errors.hpp>
 #include <camp/observer.hpp>
-#include <cassert>
 
 
 namespace camp
@@ -41,23 +39,27 @@ ClassManager& ClassManager::instance()
 }
 
 //-------------------------------------------------------------------------------------------------
-Class& ClassManager::registerNew(const std::string& name, const std::string& id)
+Class& ClassManager::addClass(const std::string& name, const std::string& id)
 {
-    // First make sure that the class doesn't already exist
-    if ((m_byName.find(name) != m_byName.end()) || (m_byId.find(id) != m_byId.end()))
-        CAMP_ERROR(InvalidClass(name.c_str()));
+    const IdIndex&   ids   = m_classes.get<Id>();
+    const NameIndex& names = m_classes.get<Name>();
 
-    // Create the new class and insert it into the lookup tables
-    ClassPtr newClass = ClassPtr(new Class(name));
-    m_byName[name] = newClass;
-    m_byId[id] = newClass;
+    // First make sure that the class doesn't already exist
+    if ((ids.find(id) != ids.end()) || (names.find(name) != names.end()))
+        CAMP_ERROR(ClassAlreadyCreated(name, id));
+
+    // Create the new class
+    boost::shared_ptr<Class> newClass(new Class(name));
+
+    // Insert it into the table
+    ClassInfo info;
+    info.id = id;
+    info.name = name;
+    info.classPtr = newClass;
+    m_classes.insert(info);
 
     // Notify observers
-    ObserverIterator end = observersEnd();
-    for (ObserverIterator it = observersBegin(); it != end; ++it)
-    {
-        (*it)->classAdded(*newClass);
-    }
+    notifyClassAdded(*newClass);
 
     return *newClass;
 }
@@ -65,56 +67,64 @@ Class& ClassManager::registerNew(const std::string& name, const std::string& id)
 //-------------------------------------------------------------------------------------------------
 std::size_t ClassManager::count() const
 {
-    return m_byName.size();
+    return m_classes.size();
 }
 
 //-------------------------------------------------------------------------------------------------
 const Class& ClassManager::getByIndex(std::size_t index) const
 {
-    // Make sure that the index is valid
-    if (index >= m_byName.size())
-        CAMP_ERROR(InvalidIndex(index, m_byName.size()));
+    // Make sure that the index is not out of range
+    if (index >= m_classes.size())
+        CAMP_ERROR(OutOfRange(index, m_classes.size()));
 
-    ClassByNameTable::const_iterator it = m_byName.begin();
+    ClassTable::const_iterator it = m_classes.begin();
     std::advance(it, index);
 
-    return *it->second;
+    return *it->classPtr;
 }
 
 //-------------------------------------------------------------------------------------------------
 const Class& ClassManager::getByName(const std::string& name) const
 {
-    ClassByNameTable::const_iterator it = m_byName.find(name);
-    if (it == m_byName.end())
-        CAMP_ERROR(InvalidClass(name.c_str()));
+    const NameIndex& names = m_classes.get<Name>();
 
-    return *it->second;
+    NameIndex::const_iterator it = names.find(name);
+    if (it == names.end())
+        CAMP_ERROR(ClassNotFound(name));
+
+    return *it->classPtr;
 }
 
 //-------------------------------------------------------------------------------------------------
 const Class& ClassManager::getById(const std::string& id) const
 {
-    ClassByIdTable::const_iterator it = m_byId.find(id);
-    if (it == m_byId.end())
-        CAMP_ERROR(InvalidClass(id.c_str()));
+    const IdIndex& ids = m_classes.get<Id>();
 
-    return *it->second;
+    IdIndex::const_iterator it = ids.find(id);
+    if (it == ids.end())
+        CAMP_ERROR(ClassNotFound(id));
+
+    return *it->classPtr;
 }
 
 //-------------------------------------------------------------------------------------------------
 const Class* ClassManager::getByIdSafe(const std::string& id) const
 {
-    ClassByIdTable::const_iterator it = m_byId.find(id);
-    if (it == m_byId.end())
+    const IdIndex& ids = m_classes.get<Id>();
+
+    IdIndex::const_iterator it = ids.find(id);
+    if (it == ids.end())
         return 0;
 
-    return &*it->second;
+    return &*it->classPtr;
 }
 
 //-------------------------------------------------------------------------------------------------
 bool ClassManager::classExists(const std::string& id) const
 {
-    return m_byId.find(id) != m_byId.end();
+    const IdIndex& ids = m_classes.get<Id>();
+
+    return ids.find(id) != ids.end();
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -125,15 +135,10 @@ ClassManager::ClassManager()
 //-------------------------------------------------------------------------------------------------
 ClassManager::~ClassManager()
 {
-    // Notify observers of classes destruction
-    ClassByNameTable::const_iterator endClass = m_byName.end();
-    ObserverIterator endObs = observersEnd();
-    for (ClassByNameTable::const_iterator itClass = m_byName.begin(); itClass != endClass; ++itClass)
+    // Notify observers
+    for (ClassTable::const_iterator it = m_classes.begin(); it != m_classes.end(); ++it)
     {
-        for (ObserverIterator itObs = observersBegin(); itObs != endObs; ++itObs)
-        {
-            (*itObs)->classRemoved(*itClass->second);
-        }
+        notifyClassRemoved(*it->classPtr);
     }
 }
 

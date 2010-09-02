@@ -29,8 +29,6 @@
 #include <camp/type.hpp>
 #include <camp/enumobject.hpp>
 #include <camp/userobject.hpp>
-#include <camp/invalidvalue.hpp>
-#include <camp/invalidobject.hpp>
 #include <camp/valuemapper.hpp>
 #include <camp/detail/valueimpl.hpp>
 #include <boost/operators.hpp>
@@ -115,7 +113,7 @@ public:
      *
      * \return Value converted to T
      *
-     * \throw InvalidValue the stored value is not convertible to T
+     * \throw BadType the stored value is not convertible to T
      */
     template <typename T>
     T to() const;
@@ -125,7 +123,7 @@ public:
      *
      * \return Value converted to T
      *
-     * \throw InvalidValue the stored value is not convertible to T
+     * \throw BadType the stored value is not convertible to T
      */
     template <typename T>
     operator T() const;
@@ -201,6 +199,16 @@ private:
     Variant m_value; ///< Stored value
     Type m_type; ///< CAMP type of the value
 };
+
+/**
+ * \brief Overload of operator >> to extract a camp::Value from a standard stream
+ *
+ * \param stream Source input stream
+ * \param value Value to fill
+ *
+ * \return Reference to the input stream
+ */
+CAMP_API std::istream& operator>>(std::istream& stream, Value& value);
 
 /**
  * \brief Overload of operator << to print a camp::Value into a standard stream
