@@ -36,6 +36,8 @@ set(CAMP_LUA_SRCS
     src/object.cpp
     include/camp-lua/context.hpp
     src/context.cpp
+    include/camp-lua/callback.hpp
+    src/callback.cpp
 )
 
 # find Lua

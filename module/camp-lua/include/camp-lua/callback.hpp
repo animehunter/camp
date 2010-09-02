@@ -21,52 +21,45 @@
 ****************************************************************************/
 
 
-#ifndef CAMP_LUA_CONVERSION_HPP
-#define CAMP_LUA_CONVERSION_HPP
-
-#include <camp/value.hpp>
-#include <string>
+#ifndef CAMP_LUA_CALLBACK_HPP
+#define CAMP_LUA_CALLBACK_HPP
 
 struct lua_State;
 
 namespace camp
 {
 
-class Class;
-
 namespace lua
 {
 
 /**
- * \brief Push onto the Lua stack \a L the metatable matching the given \a metaclass
+ * \brief Callback called when a Lua userdata holding a camp::UserObject triggers the '__index' event.
  *
- * \param L The Lua stack receiving the metatable
- * \param metaclass Metaclass to be pushed on the stack
+ * \param L Lua stack holding the userdata
+ * \return Number of return value pushed on the stack
  */
-void classToLua(lua_State* L, const camp::Class& metaclass);
+int indexCallback(lua_State* L);
 
 /**
- * \brief Return the value at \a index in the Lua stack \a L as a camp::Value
+ * \brief Callback called when a Lua userdata holding a camp::UserObject triggers the '__newindex'
+ * event.
  *
- * No value is pushed or poped to/from the Lua stack.
- *
- * \param L The Lua stack holding the desired value
- * \param index Lua index (or pseudo-index) of the desired value in the stack
- * \return The value as camp::Value
+ * \param L Lua stack holding the userdata
+ * \return Number of return value pushed on the stack
  */
-camp::Value valueFromLua(lua_State* L, int index);
+int newIndexCallback(lua_State* L);
 
 /**
- * \brief Push onto the Lua stack \a L the given \a value
+ * \brief Callback called when a Lua C closure used to wrap a CAMP function call is called.
  *
- * \param L The Lua stack receiving the new value
- * \param value Value to be pushed on the stack
+ * \param L Lua stack holding the userdata
+ * \return Number of return value pushed on the stack
  */
-void valueToLua(lua_State* L, camp::Value value);
+int callCallback(lua_State* L);
 
 } // namespace lua
 
 } // namespace camp
 
-#endif // CAMP_LUA_CONVERSION_HPP
+#endif // CAMP_LUA_CALLBACK_HPP
 

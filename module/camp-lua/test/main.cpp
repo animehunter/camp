@@ -41,6 +41,14 @@ public:
 
 CAMP_TYPE(A);
 
+class B
+{
+public:
+    std::string string;
+};
+
+CAMP_TYPE(B);
+
 void initCAMP()
 {
     camp::Class::declare<A>("A")
@@ -53,6 +61,10 @@ void initCAMP()
         .function("setInteger", &A::setInteger)
         .function("setReal", &A::setReal)
         .function("setString", &A::setString)
+        ;
+
+    camp::Class::declare<B>("B")
+        .property("string", &B::string)
         ;
 }
 
@@ -68,6 +80,16 @@ int main(int argc, char** argv)
 
     camp::lua::Context c1;
     c1["a"] = a;
+
+    B b;
+    c1["b"] = b;
+
+    A a2;
+    c1["a2"] = a2;
+
+    B b2;
+    c1["b2"] = b2;
+    c1.executeString("print('#########')");
 
     c1.executeString("print(a.boolean, a.integer, a.real, a.string)");
     c1.executeString("a.boolean = true; a.integer = 3; a.real = 6.7; a.string = \"pouet\"");

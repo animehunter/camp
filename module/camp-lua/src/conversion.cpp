@@ -22,12 +22,35 @@
 
 #include <camp-lua/conversion.hpp>
 #include <camp-lua/valuetoluavisitor.hpp>
+#include <camp-lua/callback.hpp>
+#include <camp/class.hpp>
 #include <lua.hpp>
 
 namespace camp
 {
 namespace lua
 {
+
+void classToLua(lua_State* L, const camp::Class& metaclass)
+{
+    // Try to get the metatable corresponding to the metaclass from the Lua registry
+    std::string key = "camp-lua/";
+    key += metaclass.name();
+    if (luaL_newmetatable(L, key.c_str()))
+    {
+        // A new metatable has been created as the metaclass has not been published previously
+
+        // Set the __index event to call the indexCallback function
+        lua_pushstring(L, "__index");
+        lua_pushcfunction(L, &indexCallback);
+        lua_rawset(L, -3);
+
+        // Set the __newindex event to call the newIndexCallback function
+        lua_pushstring(L, "__newindex");
+        lua_pushcfunction(L, &newIndexCallback);
+        lua_rawset(L, -3);
+    }
+}
 
 camp::Value valueFromLua(lua_State* L, int index)
 {
