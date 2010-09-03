@@ -51,6 +51,13 @@ Object& Object::operator=(camp::Value value)
     return *this;
 }
 
+Object& Object::operator=(const camp::Class& metaclass)
+{
+    classToLua(m_L, metaclass);
+    lua_setglobal(m_L, m_name.c_str());
+    return *this;
+}
+
 } // namespace lua
 
 } // namespace camp

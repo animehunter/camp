@@ -71,6 +71,15 @@ public:
      */
     Object& operator=(camp::Value value);
 
+    /**
+     * \brief Register the camp::Class \a metaclass into Lua and affect it to the global variable
+     * represented by this object.
+     *
+     * \param metaclass The metaclass to register.
+     * \return A reference to this.
+     */
+    Object& operator=(const camp::Class& metaclass);
+
 private:
     lua_State* m_L; ///< Lua state holding the global variable
     std::string m_name; ///< Name of the global variable

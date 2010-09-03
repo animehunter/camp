@@ -28,6 +28,7 @@
 class A
 {
 public:
+    A() : boolean(false), integer(0), real(0.0), string("") {}
     bool boolean;
     int integer;
     double real;
@@ -44,6 +45,7 @@ CAMP_TYPE(A);
 class B
 {
 public:
+    B(const std::string& s = "") : string(s) {}
     std::string string;
 };
 
@@ -52,6 +54,7 @@ CAMP_TYPE(B);
 void initCAMP()
 {
     camp::Class::declare<A>("A")
+        .constructor0()
         .property("boolean", &A::boolean)
         .property("integer", &A::integer)
         .property("real", &A::real)
@@ -64,6 +67,8 @@ void initCAMP()
         ;
 
     camp::Class::declare<B>("B")
+        .constructor0()
+        .constructor1<const std::string&>()
         .property("string", &B::string)
         ;
 }
@@ -89,6 +94,17 @@ int main(int argc, char** argv)
 
     B b2;
     c1["b2"] = b2;
+
+    c1.executeString("print('#########')");
+    c1["campA"] = camp::classByType<A>();
+    c1.executeString("instA = campA.new()");
+    c1.executeString("instA.string = \"testA\"");
+    c1.executeString("print(instA.string)");
+    c1["campB"] = camp::classByType<B>();
+    c1.executeString("instB = campB.new(\"testB\")");
+    c1.executeString("print(instB.string)");
+    c1.executeString("instB.string = \"testBB\"");
+    c1.executeString("print(instB.string)");
     c1.executeString("print('#########')");
 
     c1.executeString("print(a.boolean, a.integer, a.real, a.string)");

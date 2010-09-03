@@ -181,6 +181,33 @@ int callCallback(lua_State* L)
     return 0;
 }
 
+int constructCallback(lua_State* L)
+{
+    // Get args
+    camp::Args args;
+    int argc = lua_gettop(L);
+    for (int i = 1; i <= argc; ++i)
+        args += camp::lua::valueFromLua(L, i);
+
+    // Retrieve the subject camp::Class
+    int classIndex = lua_upvalueindex(1);
+    if (!lua_isuserdata(L, classIndex))
+        return luaL_error(L, "The metaclass could not be retrieved");
+    camp::Class* metaclass = static_cast<camp::Class*>(lua_touserdata(L, classIndex));
+
+    // Clear the stack
+    lua_settop(L, 0);
+
+    // Call the constructor
+    camp::UserObject result = metaclass->construct(args);
+    if (result == camp::UserObject::nothing)
+        return luaL_error(L, "Fail to construct a new '%s'", metaclass->name().c_str());
+
+    // Convert the new object to Lua
+    camp::lua::valueToLua(L, result);
+    return 1;
+}
+
 } // namespace lua
 
 } // namespace camp

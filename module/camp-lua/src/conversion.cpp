@@ -40,6 +40,12 @@ void classToLua(lua_State* L, const camp::Class& metaclass)
     {
         // A new metatable has been created as the metaclass has not been published previously
 
+        // Add a "new" entry which will call the class constructor if any (using a C closure)
+        lua_pushstring(L, "new");
+        lua_pushlightuserdata(L, const_cast<camp::Class*>(&metaclass));
+        lua_pushcclosure(L, &constructCallback, 1);
+        lua_rawset(L, -3);
+
         // Set the __index event to call the indexCallback function
         lua_pushstring(L, "__index");
         lua_pushcfunction(L, &indexCallback);
