@@ -67,6 +67,26 @@ int indexCallback(lua_State* L)
 
         return 1; // One value returned
     }
+    catch (const camp::PropertyNotFound&)
+    {
+        // No property with the desired name
+        try
+        {
+            // Try to retrieve a function
+            const camp::Function& function = metaclass.function(key);
+
+            // Push the callback function onto the stack
+            // The function to be called is added to the C closure
+            lua_pushlightuserdata(L, const_cast<camp::Function*>(&function));
+            lua_pushcclosure(L, &callCallback, 1);
+
+            return 1; // One value returned (the C closure)
+        }
+        catch (const camp::Error& err)
+        {
+            return luaL_error(L, err.what());
+        }
+    }
     catch (const camp::Error& err)
     {
         return luaL_error(L, err.what());
