@@ -38,6 +38,7 @@ public:
     void setInteger(int value) { integer = value; };
     void setReal(double value) { real = value; };
     void setString(std::string value) { string = value; };
+    std::string newF() { return "new function called!"; };
 };
 
 CAMP_TYPE(A);
@@ -64,6 +65,7 @@ void initCAMP()
         .function("setInteger", &A::setInteger)
         .function("setReal", &A::setReal)
         .function("setString", &A::setString)
+        .function("new", &A::newF)
         ;
 
     camp::Class::declare<B>("B")
@@ -106,6 +108,8 @@ int main(int argc, char** argv)
     c1.executeString("instB.string = \"testBB\"");
     c1.executeString("print(instB.string)");
     c1.executeString("print('#########')");
+    c1.executeString("print(a:new())");
+    c1.executeString("print(instA:new())");
 
     c1.executeString("print(a.boolean, a.integer, a.real, a.string)");
     c1.executeString("a.boolean = true; a.integer = 3; a.real = 6.7; a.string = \"pouet\"");

@@ -22,7 +22,8 @@
 
 
 #include <camp-lua/valuetoluavisitor.hpp>
-#include <camp-lua/conversion.hpp>
+#include <camp-lua/callback.hpp>
+#include <camp/class.hpp>
 #include <lua.hpp>
 
 namespace camp
@@ -72,8 +73,24 @@ void ValueToLuaVisitor::operator()(const camp::UserObject& value)
     camp::UserObject* userdata = static_cast<camp::UserObject*>(lua_newuserdata(m_L, sizeof(camp::UserObject)));
     new (userdata) camp::UserObject(value); // Call the placement 'new' operator
 
-    // Get the table to be used as metatable
-    classToLua(m_L, value.getClass());
+    // Try to get the metatable corresponding to the metaclass from the Lua registry
+    const camp::Class& metaclass = userdata->getClass();
+    std::string key = "camp-lua/";
+    key += metaclass.name();
+    if (luaL_newmetatable(m_L, key.c_str()))
+    {
+        // A new metatable has been created as the metaclass has not been published previously
+
+        // Set the __index event to call the indexCallback function
+        lua_pushstring(m_L, "__index");
+        lua_pushcfunction(m_L, &indexCallback);
+        lua_rawset(m_L, -3);
+
+        // Set the __newindex event to call the newIndexCallback function
+        lua_pushstring(m_L, "__newindex");
+        lua_pushcfunction(m_L, &newIndexCallback);
+        lua_rawset(m_L, -3);
+    }
 
     // Set the table as the metatable of the userdata
     lua_setmetatable(m_L, -2);

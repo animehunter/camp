@@ -33,29 +33,13 @@ namespace lua
 
 void classToLua(lua_State* L, const camp::Class& metaclass)
 {
-    // Try to get the metatable corresponding to the metaclass from the Lua registry
-    std::string key = "camp-lua/";
-    key += metaclass.name();
-    if (luaL_newmetatable(L, key.c_str()))
-    {
-        // A new metatable has been created as the metaclass has not been published previously
-
-        // Add a "new" entry which will call the class constructor if any (using a C closure)
-        lua_pushstring(L, "new");
-        lua_pushlightuserdata(L, const_cast<camp::Class*>(&metaclass));
-        lua_pushcclosure(L, &constructCallback, 1);
-        lua_rawset(L, -3);
-
-        // Set the __index event to call the indexCallback function
-        lua_pushstring(L, "__index");
-        lua_pushcfunction(L, &indexCallback);
-        lua_rawset(L, -3);
-
-        // Set the __newindex event to call the newIndexCallback function
-        lua_pushstring(L, "__newindex");
-        lua_pushcfunction(L, &newIndexCallback);
-        lua_rawset(L, -3);
-    }
+    // Create a table with "new" entry which will call the class constructor if any (using a C
+    // closure)
+    lua_createtable(L, 0, 1);
+    lua_pushstring(L, "new");
+    lua_pushlightuserdata(L, const_cast<camp::Class*>(&metaclass));
+    lua_pushcclosure(L, &constructCallback, 1);
+    lua_rawset(L, -3);
 }
 
 camp::Value valueFromLua(lua_State* L, int index)

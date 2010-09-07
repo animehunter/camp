@@ -72,8 +72,9 @@ public:
     Object& operator=(camp::Value value);
 
     /**
-     * \brief Register the camp::Class \a metaclass into Lua and affect it to the global variable
-     * represented by this object.
+     * \brief Affect a new factory object to the global variable represented by this object.
+     *
+     * The "new" function of the factory object will construct and return a new instance of \a metaclass.
      *
      * \param metaclass The metaclass to register.
      * \return A reference to this.

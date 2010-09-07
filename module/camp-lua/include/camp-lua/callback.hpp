@@ -58,7 +58,7 @@ int newIndexCallback(lua_State* L);
 int callCallback(lua_State* L);
 
 /**
- * \brief Callback called when a Lua metaclass "new" function is called.
+ * \brief Callback called when a factory "new" function is called.
  *
  * \param L Lua stack holding the metaclass
  * \return Number of return value pushed on the stack
