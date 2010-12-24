@@ -92,4 +92,11 @@ UserObject UserObject::copy(const T& object)
     return userObject;
 }
 
+//-------------------------------------------------------------------------------------------------
+template <>
+UserObject UserObject::copy(const UserObject& object)
+{
+    return object.copy();
+}
+
 } // namespace camp

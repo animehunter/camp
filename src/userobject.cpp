@@ -26,6 +26,7 @@
 #include <camp/class.hpp>
 #include <camp/function.hpp>
 #include <camp/property.hpp>
+#include <camp/detail/objectholder.hpp>
 
 
 namespace camp
@@ -79,6 +80,18 @@ void* UserObject::pointer() const
     {
         return 0;
     }
+}
+
+//-------------------------------------------------------------------------------------------------
+UserObject UserObject::copy() const
+{
+    detail::AbstractObjectHolder* copyHolder = m_holder->copy();
+    assert(copyHolder);
+
+    UserObject userObject;
+    userObject.m_class = m_class;
+    userObject.m_holder.reset(copyHolder);
+    return userObject;
 }
 
 //-------------------------------------------------------------------------------------------------

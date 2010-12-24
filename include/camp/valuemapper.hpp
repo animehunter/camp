@@ -196,7 +196,11 @@ template <>
 struct ValueMapper<std::string>
 {
     static const int type = camp::stringType;
+#ifdef CAMP_COPY_STRING
+    static std::string to(const std::string& source) {return source;}
+#else
     static const std::string& to(const std::string& source) {return source;}
+#endif
 
     static std::string from(bool source)                    {return boost::lexical_cast<std::string>(source);}
     static std::string from(long source)                    {return boost::lexical_cast<std::string>(source);}

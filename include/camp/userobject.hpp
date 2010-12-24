@@ -118,6 +118,13 @@ public:
     void* pointer() const;
 
     /**
+     * \brief Copies the stored object to another UserObject.
+     * 
+     * \return A copy of the stored object in an UserObject.
+     */
+    UserObject copy() const;
+
+    /**
      * \brief Retrieve the metaclass of the stored instance
      *
      * \return Reference to the instance's metaclass
@@ -245,6 +252,18 @@ public:
      */
     template <typename T>
     static UserObject copy(const T& object);
+
+    /**
+     * \brief Construct a user object with a copy of an user object
+     *
+     * This functions is NOT equivalent to calling UserObject(object).
+     *
+     * \param object User object to copy
+     *
+     * \return UserObject containing a copy of \a object
+     */
+    template <>
+    static UserObject copy(const UserObject& object);
 
 private:
 

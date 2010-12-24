@@ -24,7 +24,6 @@
 #define CAMP_XML_RAPIDXML_HPP
 
 #include <camp-xml/common.hpp>
-#include <rapidxml.hpp>
 
 namespace camp
 {
@@ -93,11 +92,12 @@ struct RapidXml
  *
  * \param object Object to serialize
  * \param node Parent for the generated XML nodes
- * \param exclude Tag to exclude from the serialization process
+ * \param tag Tag to include or exclude from the serialization process.
+ * \param include Set this to true to make the tag an including tag, false for excluding tag.
  */
-inline void serialize(const UserObject& object, rapidxml::xml_node<>* node, const Value& exclude = Value::nothing)
+inline void serialize(const UserObject& object, rapidxml::xml_node<>* node, const Value& tag = Value::nothing, bool include = false)
 {
-    detail::serialize<detail::RapidXml>(object, node, exclude);
+    detail::serialize<detail::RapidXml>(object, node, tag, include);
 }
 
 /**
@@ -115,11 +115,12 @@ inline void serialize(const UserObject& object, rapidxml::xml_node<>* node, cons
  *
  * \param object Object to fill with deserialized information
  * \param node XML node to parse
- * \param exclude Tag to exclude from the deserialization process
+ * \param tag Tag to include or exclude from the serialization process.
+ * \param include Set this to true to make the tag an including tag, false for excluding tag.
  */
-inline void deserialize(const UserObject& object, rapidxml::xml_node<>* node, const Value& exclude = Value::nothing)
+inline void deserialize(const UserObject& object, rapidxml::xml_node<>* node, const Value& tag = Value::nothing, bool include = false)
 {
-    detail::deserialize<detail::RapidXml>(object, node, exclude);
+    detail::deserialize<detail::RapidXml>(object, node, tag, include);
 }
 
 } // namespace xml

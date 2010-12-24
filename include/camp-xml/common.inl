@@ -28,7 +28,7 @@ namespace detail
 {
 //-------------------------------------------------------------------------------------------------
 template <typename Proxy>
-void serialize(const UserObject& object, typename Proxy::NodeType node, const Value& exclude)
+void serialize(const UserObject& object, typename Proxy::NodeType node, const Value& tag, bool include)
 {
     // Iterate over the object's properties using its metaclass
     const Class& metaclass = object.getClass();
@@ -37,7 +37,7 @@ void serialize(const UserObject& object, typename Proxy::NodeType node, const Va
         const Property& property = metaclass.property(i);
 
         // If the property has the exclude tag, ignore it
-        if ((exclude != Value::nothing) && property.hasTag(exclude))
+        if ((tag != Value::nothing) && include?!property.hasTag(tag):property.hasTag(tag))
             continue;
 
         // Create a child node for the new property
@@ -48,7 +48,7 @@ void serialize(const UserObject& object, typename Proxy::NodeType node, const Va
         if (property.type() == userType)
         {
             // The current property is a composed type: serialize it recursively
-            serialize<Proxy>(property.get(object).to<UserObject>(), child, exclude);
+            serialize<Proxy>(property.get(object).to<UserObject>(), child, tag, include);
         }
         else if (property.type() == arrayType)
         {
@@ -66,7 +66,8 @@ void serialize(const UserObject& object, typename Proxy::NodeType node, const Va
                     if (arrayProperty.elementType() == userType)
                     {
                         // The array elements are composed objects: serialize them recursively
-                        serialize<Proxy>(arrayProperty.get(object, j).to<UserObject>(), item, exclude);
+                        serialize<Proxy>(arrayProperty.get(object, j).to<UserObject>(), item, tag, 
+                            include);
                     }
                     else
                     {
@@ -86,7 +87,7 @@ void serialize(const UserObject& object, typename Proxy::NodeType node, const Va
 
 //-------------------------------------------------------------------------------------------------
 template <typename Proxy>
-void deserialize(const UserObject& object, typename Proxy::NodeType node, const Value& exclude)
+void deserialize(const UserObject& object, typename Proxy::NodeType node, const Value& tag, bool include)
 {
     // Iterate over the object's properties using its metaclass
     const Class& metaclass = object.getClass();
@@ -95,7 +96,7 @@ void deserialize(const UserObject& object, typename Proxy::NodeType node, const 
         const Property& property = metaclass.property(i);
 
         // If the property has the exclude tag, ignore it
-        if ((exclude != Value::nothing) && property.hasTag(exclude))
+        if ((tag != Value::nothing) && include?!property.hasTag(tag):property.hasTag(tag))
             continue;
 
         // Find the child node corresponding to the new property
@@ -106,7 +107,7 @@ void deserialize(const UserObject& object, typename Proxy::NodeType node, const 
         if (property.type() == userType)
         {
             // The current property is a composed type: deserialize it recursively
-            deserialize<Proxy>(property.get(object).to<UserObject>(), child, exclude);
+            deserialize<Proxy>(property.get(object).to<UserObject>(), child, tag, include);
         }
         else if (property.type() == arrayType)
         {
@@ -132,7 +133,8 @@ void deserialize(const UserObject& object, typename Proxy::NodeType node, const 
                 if (arrayProperty.elementType() == userType)
                 {
                     // The array elements are composed objects: deserialize them recursively
-                    deserialize<Proxy>(arrayProperty.get(object, index).to<UserObject>(), item, exclude);
+                    deserialize<Proxy>(arrayProperty.get(object, index).to<UserObject>(), item, tag, 
+                        include);
                 }
                 else
                 {
