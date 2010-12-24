@@ -65,6 +65,13 @@ public:
      */
     virtual AbstractObjectHolder* getWritable() = 0;
 
+    /**
+     * \brief Return a new object holder with a copy of the stored object. 
+     * 
+     * \return Object holder with copy of the stored object or 0 for noncopyable types.
+     */
+    virtual AbstractObjectHolder* copy() = 0;
+
 protected:
 
     /**
@@ -105,6 +112,29 @@ public:
      */
     virtual AbstractObjectHolder* getWritable();
 
+    /**
+     * \brief Return a new object holder with a copy of the stored object. 
+     * 
+     * \return Object holder with copy of the stored object or 0 for noncopyable types.
+     */
+    virtual AbstractObjectHolder* copy();
+
+    /**
+     * \brief Copy implementation for noncopyable types
+     *
+     * \return Null pointer
+     */
+    template <bool B> 
+    AbstractObjectHolder* copyImpl() { return 0; }
+
+    /**
+     * \brief Copy implementation for copyable types
+     *
+     * \return Object holder with copy of the stored object.
+     */
+    template <> 
+    AbstractObjectHolder* copyImpl<true>() { return new ObjectHolderByCopy<T>(m_object); }
+
 private:
 
     const T* m_object; ///< Pointer to the object
@@ -143,6 +173,29 @@ public:
      */
     virtual AbstractObjectHolder* getWritable();
 
+    /**
+     * \brief Return a new object holder with a copy of the stored object. 
+     * 
+     * \return Object holder with copy of the stored object or 0 for noncopyable types.
+     */
+    virtual AbstractObjectHolder* copy();
+
+    /**
+     * \brief Copy implementation for noncopyable types
+     *
+     * \return Null pointer
+     */
+    template <bool B> 
+    AbstractObjectHolder* copyImpl() { return 0; }
+
+    /**
+     * \brief Copy implementation for copyable types
+     *
+     * \return Object holder with copy of the stored object.
+     */
+    template <> 
+    AbstractObjectHolder* copyImpl<true>() { return new ObjectHolderByCopy<T>(m_object); }
+
 private:
 
     T* m_object; ///< Pointer to the object
@@ -180,6 +233,29 @@ public:
      * \return Holder storing a writable object
      */
     virtual AbstractObjectHolder* getWritable();
+
+    /**
+     * \brief Return a new object holder with a copy of the stored object. 
+     * 
+     * \return Object holder with copy of the stored object or 0 for noncopyable types.
+     */
+    virtual AbstractObjectHolder* copy();
+
+    /**
+     * \brief Copy implementation for noncopyable types
+     *
+     * \return Null pointer
+     */
+    template <bool B> 
+    AbstractObjectHolder* copyImpl() { return 0; }
+
+    /**
+     * \brief Copy implementation for copyable types
+     *
+     * \return Object holder with copy of the stored object.
+     */
+    template <> 
+    AbstractObjectHolder* copyImpl<true>() { return new ObjectHolderByCopy<T>(&m_object); }
 
 private:
 

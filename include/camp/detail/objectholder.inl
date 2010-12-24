@@ -60,6 +60,13 @@ AbstractObjectHolder* ObjectHolderByConstRef<T>::getWritable()
 
 //-------------------------------------------------------------------------------------------------
 template <typename T>
+AbstractObjectHolder* ObjectHolderByConstRef<T>::copy()
+{
+    return copyImpl<StaticTypeId<T>::copyable>();
+}
+
+//-------------------------------------------------------------------------------------------------
+template <typename T>
 ObjectHolderByRef<T>::ObjectHolderByRef(T* object)
     : m_object(object)
     , m_alignedPtr(classCast(object, classByType<T>(), classByObject(object)))
@@ -83,6 +90,13 @@ AbstractObjectHolder* ObjectHolderByRef<T>::getWritable()
 
 //-------------------------------------------------------------------------------------------------
 template <typename T>
+AbstractObjectHolder* ObjectHolderByRef<T>::copy()
+{
+    return copyImpl<StaticTypeId<T>::copyable>();
+}
+
+//-------------------------------------------------------------------------------------------------
+template <typename T>
 ObjectHolderByCopy<T>::ObjectHolderByCopy(const T* object)
     : m_object(*object)
 {
@@ -101,6 +115,13 @@ AbstractObjectHolder* ObjectHolderByCopy<T>::getWritable()
 {
     // We already store a modifiable object
     return this;
+}
+
+//-------------------------------------------------------------------------------------------------
+template <typename T>
+AbstractObjectHolder* ObjectHolderByCopy<T>::copy()
+{
+    return copyImpl<StaticTypeId<T>::copyable>();
 }
 
 } // namespace detail
