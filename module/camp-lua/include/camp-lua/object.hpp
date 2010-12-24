@@ -81,6 +81,15 @@ public:
      */
     Object& operator=(const camp::Class& metaclass);
 
+    /**
+     * \brief Register the camp::Enum \a metaenum into Lua and affect it to the global variable
+     * represented by this object.
+     *
+     * \param metaenum The metaenum to register.
+     * \return A reference to this.
+     */
+    Object& operator=(const camp::Enum& metaenum);
+
 private:
     lua_State* m_L; ///< Lua state holding the global variable
     std::string m_name; ///< Name of the global variable

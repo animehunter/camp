@@ -58,6 +58,13 @@ Object& Object::operator=(const camp::Class& metaclass)
     return *this;
 }
 
+Object& Object::operator=(const camp::Enum& metaenum)
+{
+    enumToLua(m_L, metaenum);
+    lua_setglobal(m_L, m_name.c_str());
+    return *this;
+}
+
 } // namespace lua
 
 } // namespace camp

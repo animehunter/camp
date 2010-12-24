@@ -64,7 +64,7 @@ void ValueToLuaVisitor::operator()(const std::string& value)
 
 void ValueToLuaVisitor::operator()(const camp::EnumObject& value)
 {
-    // TODO
+    lua_pushnumber(m_L, value.value());
 }
 
 void ValueToLuaVisitor::operator()(const camp::UserObject& value)

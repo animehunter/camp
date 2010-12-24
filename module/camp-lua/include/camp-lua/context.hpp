@@ -114,6 +114,11 @@ public:
      */
     Object operator[](const std::string& name);
 
+    /**
+     * \brief Returns the lua state this context holds.
+     */
+    inline lua_State* getLuaState() const { return m_L; }
+
 private:
     Context* m_parent; ///< Parent context
     lua_State* m_L; ///< The Lua state (i.e. The Lua VM)

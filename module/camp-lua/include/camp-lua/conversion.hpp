@@ -33,6 +33,7 @@ namespace camp
 {
 
 class Class;
+class Enum;
 
 namespace lua
 {
@@ -44,6 +45,14 @@ namespace lua
  * \param metaclass Metaclass to be pushed on the stack
  */
 void classToLua(lua_State* L, const camp::Class& metaclass);
+
+/**
+ * \brief Push onto the Lua stack \a L the table containing the values from given \a metaenum
+ *
+ * \param L The Lua stack receiving the table.
+ * \param metaenum Metaenum to be pushed on the stack.
+ */
+void enumToLua(lua_State* L, const camp::Enum& metaenum);
 
 /**
  * \brief Return the value at \a index in the Lua stack \a L as a camp::Value

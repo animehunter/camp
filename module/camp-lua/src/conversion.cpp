@@ -24,6 +24,7 @@
 #include <camp-lua/valuetoluavisitor.hpp>
 #include <camp-lua/callback.hpp>
 #include <camp/class.hpp>
+#include <camp/enum.hpp>
 #include <lua.hpp>
 
 namespace camp
@@ -40,6 +41,22 @@ void classToLua(lua_State* L, const camp::Class& metaclass)
     lua_pushlightuserdata(L, const_cast<camp::Class*>(&metaclass));
     lua_pushcclosure(L, &constructCallback, 1);
     lua_rawset(L, -3);
+}
+
+void enumToLua(lua_State* L, const camp::Enum& metaenum)
+{
+    std::size_t size = metaenum.size();
+
+    // Create a new table to hold the enum name-value pairs
+    lua_createtable(L, 0, size);
+
+    // Set name-value pairs to the table
+    for(std::size_t i = 0; i != size; ++i)
+    {
+        const camp::Enum::Pair& pair = metaenum.pair(i);
+        lua_pushnumber(L, pair.value);
+        lua_setfield(L, -2, pair.name.c_str());
+    }
 }
 
 camp::Value valueFromLua(lua_State* L, int index)

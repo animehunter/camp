@@ -86,7 +86,7 @@ public:
     void operator()(const std::string& value);
 
     /**
-     * \brief Enum value are not handled yet
+     * \brief Push a Lua number corresponding to the enum value
      *
      * \param value Value to be converted
      */
