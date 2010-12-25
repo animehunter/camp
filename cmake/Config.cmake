@@ -20,6 +20,13 @@ if(NOT BUILD_SHARED_LIBS)
     )
 endif()
 
+# Add an option for if strings should be copied inside a camp::Value
+if(NOT COPY_STRINGS)
+    set(COPY_STRINGS FALSE
+        CACHE BOOL "TRUE to copy strings inside a camp::Value, FALSE to reference strings inside a camp::Value."
+    )
+endif()
+
 # Set the default test build option to false
 if(NOT BUILD_TEST)
     set(BUILD_TEST FALSE

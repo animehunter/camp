@@ -153,6 +153,11 @@ else()
     add_definitions(-DCAMP_STATIC)
 endif()
 
+# copy or reference strings
+if(COPY_STRINGS)
+    add_definitions(-DCAMP_COPY_STRING)
+endif()
+
 # define d suffix on windows
 if(WIN32)
     set_target_properties(camp PROPERTIES DEBUG_POSTFIX d)
