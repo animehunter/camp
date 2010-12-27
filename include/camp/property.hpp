@@ -133,7 +133,7 @@ public:
      *
      * \return Connection object to block or disconnect the signal-slot connection.
      */
-    boost::signals2::connection connect(const OnSet::slot_type& slot);
+    boost::signals2::connection connect(const OnSet::slot_type& slot) const;
 
 protected:
 
@@ -189,7 +189,7 @@ private:
     Type m_type; ///< Type of the property
     detail::Getter<bool> m_readable; ///< Accessor to get the readable state of the property
     detail::Getter<bool> m_writable; ///< Accessor to get the writable state of the property
-    OnSet m_signal; ///< Setter signal
+    mutable OnSet m_signal; ///< Setter signal
 };
 
 } // namespace camp

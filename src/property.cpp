@@ -90,7 +90,7 @@ void Property::accept(ClassVisitor& visitor) const
 }
 
 //-------------------------------------------------------------------------------------------------
-boost::signals2::connection Property::connect(const OnSet::slot_type& slot)
+boost::signals2::connection Property::connect(const OnSet::slot_type& slot) const
 {
     return m_signal.connect(slot);
 }

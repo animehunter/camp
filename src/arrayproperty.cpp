@@ -155,7 +155,7 @@ void ArrayProperty::accept(ClassVisitor& visitor) const
 }
 
 //-------------------------------------------------------------------------------------------------
-boost::signals2::connection ArrayProperty::connect(const OnInsert::slot_type& slot)
+boost::signals2::connection ArrayProperty::connectInsertion(const OnInsert::slot_type& slot) const
 {
     return m_signal.connect(slot);
 }

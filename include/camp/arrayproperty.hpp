@@ -174,7 +174,7 @@ public:
      *
      * \return Connection object to block or disconnect the signal-slot connection.
      */
-    boost::signals2::connection connect(const OnInsert::slot_type& slot);
+    boost::signals2::connection connectInsertion(const OnInsert::slot_type& slot) const;
 
 protected:
 
@@ -253,7 +253,7 @@ private:
 
     Type m_elementType; ///< Type of the individual elements of the array
     bool m_dynamic; ///< Is the array dynamic?
-    OnInsert m_signal; ///< Insertion signal
+    mutable OnInsert m_signal; ///< Insertion signal
 };
 
 } // namespace camp
