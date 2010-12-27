@@ -38,6 +38,8 @@ class CAMP_API ArrayProperty : public Property
 {
 public:
 
+    typedef boost::signals2::signal<void (const UserObject&, const ArrayProperty&, const Value&)> OnInsert;
+
     /**
      * \brief Construct the property from its description
      *
@@ -165,6 +167,15 @@ public:
      */
     virtual void accept(ClassVisitor& visitor) const;
 
+    /**
+     * \brief Connects a slot to the value inserted signal.
+     * 
+     * \param slot The slot to connect to the signal.
+     *
+     * \return Connection object to block or disconnect the signal-slot connection.
+     */
+    boost::signals2::connection connect(const OnInsert::slot_type& slot);
+
 protected:
 
     /**
@@ -242,6 +253,7 @@ private:
 
     Type m_elementType; ///< Type of the individual elements of the array
     bool m_dynamic; ///< Is the array dynamic?
+    OnInsert m_signal; ///< Insertion signal
 };
 
 } // namespace camp

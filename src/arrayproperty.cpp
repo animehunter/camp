@@ -123,6 +123,9 @@ void ArrayProperty::insert(const UserObject& object, std::size_t before, const V
     if (before >= range)
         CAMP_ERROR(OutOfRange(before, range));
 
+    // Signal before inserting the value so slots can throw an exception to prevent insertion.
+    m_signal(object, *this, value);
+
     return insertElement(object, before, value);
 }
 
@@ -149,6 +152,12 @@ void ArrayProperty::remove(const UserObject& object, std::size_t index) const
 void ArrayProperty::accept(ClassVisitor& visitor) const
 {
     visitor.visit(*this);
+}
+
+//-------------------------------------------------------------------------------------------------
+boost::signals2::connection ArrayProperty::connect(const OnInsert::slot_type& slot)
+{
+    return m_signal.connect(slot);
 }
 
 //-------------------------------------------------------------------------------------------------
