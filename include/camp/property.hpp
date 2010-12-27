@@ -29,6 +29,7 @@
 #include <camp/detail/getter.hpp>
 #include <camp/tagholder.hpp>
 #include <camp/type.hpp>
+#include <boost/signals2.hpp>
 #include <string>
 
 
@@ -50,6 +51,8 @@ class ClassVisitor;
 class CAMP_API Property : public TagHolder
 {
 public:
+
+    typedef boost::signals2::signal<void (const UserObject&, const Property&, const Value&)> OnSet;
 
     /**
      * \brief Destructor
@@ -123,6 +126,15 @@ public:
      */
     virtual void accept(ClassVisitor& visitor) const;
 
+    /**
+     * \brief Connects a slot to the property setted signal.
+     * 
+     * \param slot The slot to connect to the signal.
+     *
+     * \return Connection object to block or disconnect the signal-slot connection.
+     */
+    boost::signals2::connection connect(const OnSet::slot_type& slot);
+
 protected:
 
     template <typename T> friend class ClassBuilder;
@@ -177,6 +189,7 @@ private:
     Type m_type; ///< Type of the property
     detail::Getter<bool> m_readable; ///< Accessor to get the readable state of the property
     detail::Getter<bool> m_writable; ///< Accessor to get the writable state of the property
+    OnSet m_signal; ///< Setter signal
 };
 
 } // namespace camp

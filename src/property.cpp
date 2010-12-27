@@ -75,6 +75,9 @@ void Property::set(const UserObject& object, const Value& value) const
     if (!writable(object))
         CAMP_ERROR(ForbiddenWrite(name()));
 
+    // Signal before setting the property so slots can throw an exception prevent setting.
+    m_signal(object, *this, value);
+
     // Here we don't call setValue directly, we rather let the user object do it
     // and add any processing needed for proper propagation of the modification
     object.set(*this, value);
@@ -84,6 +87,12 @@ void Property::set(const UserObject& object, const Value& value) const
 void Property::accept(ClassVisitor& visitor) const
 {
     visitor.visit(*this);
+}
+
+//-------------------------------------------------------------------------------------------------
+boost::signals2::connection Property::connect(const OnSet::slot_type& slot)
+{
+    return m_signal.connect(slot);
 }
 
 //-------------------------------------------------------------------------------------------------
