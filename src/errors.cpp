@@ -44,15 +44,16 @@ std::string BadType::typeName(Type type)
 {
     switch (type)
     {
-        case noType:     return "none";
-        case boolType:   return "boolean";
-        case intType:    return "integer";
-        case realType:   return "real";
-        case stringType: return "string";
-        case enumType:   return "enum";
-        case arrayType:  return "array";
-        case userType:   return "user";
-        default:         return "unknown";
+        case noType:            return "none";
+        case boolType:          return "boolean";
+        case intType:           return "integer";
+        case realType:          return "real";
+        case stringType:        return "string";
+        case enumType:          return "enum";
+        case arrayType:         return "array";
+        case dictionaryType:    return "dictionary";
+        case userType:          return "user";
+        default:                return "unknown";
     }
 }
 
@@ -146,6 +147,13 @@ OutOfRange::OutOfRange(std::size_t index, std::size_t size)
     : Error("the index (" + str(index) + ") is out of the allowed range [0, " + str(size - 1) + "]")
 {
 }
+
+//-------------------------------------------------------------------------------------------------
+ElementNotFound::ElementNotFound()
+: Error("the element has not been found")
+{
+}
+
 
 //-------------------------------------------------------------------------------------------------
 PropertyNotFound::PropertyNotFound(const std::string& name, const std::string& className)

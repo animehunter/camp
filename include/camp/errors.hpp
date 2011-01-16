@@ -305,6 +305,19 @@ public:
 };
 
 /**
+ * \brief Error thrown when an element cannot be found in a dictionary.
+ */
+class CAMP_API ElementNotFound : public Error
+{
+public:
+
+    /**
+     * \brief Constructor
+     */
+    ElementNotFound();
+};
+
+/**
  * \brief Error thrown when a property can't be found in a metaclass (by its name)
  */
 class CAMP_API PropertyNotFound : public Error

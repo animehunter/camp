@@ -68,6 +68,8 @@ set(CAMP_SRCS
     src/class.cpp
     include/camp/arrayproperty.hpp
     src/arrayproperty.cpp
+    include/camp/dictionaryproperty.hpp
+    src/dictionaryproperty.cpp
     include/camp/args.hpp
     src/args.cpp
     include/camp/value.hpp
@@ -93,6 +95,7 @@ set(CAMP_SRCS
     include/camp/classbuilder.hpp
     include/camp/classbuilder.inl
     include/camp/arraymapper.hpp
+    include/camp/dictionarymapper.hpp
     include/camp/valuemapper.hpp
     include/camp/valuevisitor.hpp
     include/camp/detail/valueimpl.hpp
@@ -116,6 +119,8 @@ set(CAMP_SRCS
     include/camp/detail/callhelper.hpp
     include/camp/detail/arraypropertyimpl.hpp
     include/camp/detail/arraypropertyimpl.inl
+    include/camp/detail/dictionarypropertyimpl.hpp
+    include/camp/detail/dictionarypropertyimpl.inl
     include/camp/detail/yesnotype.hpp
     include/camp/detail/objectholder.hpp
     include/camp/detail/objectholder.inl

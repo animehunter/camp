@@ -31,6 +31,8 @@ set(CAMP_TEST_SRCS
     main.cpp
     arrayproperty.cpp
     arrayproperty.hpp
+    dictionaryproperty.cpp
+    dictionaryproperty.hpp
     class.cpp
     class.hpp
     enum.cpp
