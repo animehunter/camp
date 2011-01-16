@@ -28,6 +28,7 @@
 #include <camp/type.hpp>
 #include <camp/detail/simplepropertyimpl.hpp>
 #include <camp/detail/arraypropertyimpl.hpp>
+#include <camp/detail/dictionarypropertyimpl.hpp>
 #include <camp/detail/enumpropertyimpl.hpp>
 #include <camp/detail/userpropertyimpl.hpp>
 #include <camp/detail/functiontraits.hpp>
@@ -57,6 +58,15 @@ template <typename A>
 struct PropertyMapper<A, camp::arrayType>
 {
     typedef ArrayPropertyImpl<A> Type;
+};
+
+/*
+ * Instanciate dictionary properties
+ */
+template <typename A>
+struct PropertyMapper<A, camp::dictionaryType>
+{
+    typedef DictionaryPropertyImpl<A> Type;
 };
 
 /*

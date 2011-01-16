@@ -33,6 +33,7 @@ namespace camp
 class Property;
 class SimpleProperty;
 class ArrayProperty;
+class DictionaryProperty;
 class EnumProperty;
 class UserProperty;
 class Function;
@@ -64,6 +65,12 @@ class Function;
  *     {
  *         std::cout << "Array property: " << property.name() << " - "
  *                   << "dynamic:" << property.dynamic() << std::endl;
+ *     }
+ *
+ *     void visit(const camp::DictionaryProperty& property)
+ *     {
+ *         std::cout << "Array property: " << property.name() << " - "
+ *                   << "size:" << property.size() << std::endl;
  *     }
  * 
  *     void visit(const camp::EnumProperty& property)
@@ -123,6 +130,13 @@ public:
      * \param property Property which is being visited
      */
     virtual void visit(const ArrayProperty& property);
+
+    /**
+     * \brief Visit a dictionary property
+     *
+     * \param property Property which is being visited
+     */
+    virtual void visit(const DictionaryProperty& property);
 
     /**
      * \brief Visit an enum property

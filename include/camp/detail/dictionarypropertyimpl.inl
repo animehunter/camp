@@ -21,63 +21,60 @@
 ****************************************************************************/
 
 
-#include <camp/classvisitor.hpp>
-
-
 namespace camp
 {
-//-------------------------------------------------------------------------------------------------
-ClassVisitor::~ClassVisitor()
+namespace detail
 {
-    // Nothing to do
+//-------------------------------------------------------------------------------------------------
+template <typename A>
+DictionaryPropertyImpl<A>::DictionaryPropertyImpl(const std::string& name, const A& accessor)
+    : DictionaryProperty(name, mapType<KeyType>(), mapType<ElementType>())
+    , m_accessor(accessor)
+{
 }
 
 //-------------------------------------------------------------------------------------------------
-void ClassVisitor::visit(const Property&)
+template <typename A>
+std::size_t DictionaryPropertyImpl<A>::getSize(const UserObject& object) const
 {
-    // The default implementation does nothing
+    return Mapper::size(dictionary(object));
 }
 
 //-------------------------------------------------------------------------------------------------
-void ClassVisitor::visit(const SimpleProperty&)
+template <typename A>
+bool DictionaryPropertyImpl<A>::queryExists(const UserObject& object, const Value& key) const
 {
-    // The default implementation does nothing
+    return Mapper::exists(dictionary(object), key.to<KeyType>());
 }
 
 //-------------------------------------------------------------------------------------------------
-void ClassVisitor::visit(const ArrayProperty&)
+template <typename A>
+Value DictionaryPropertyImpl<A>::getElement(const UserObject& object, const Value& key) const
 {
-    // The default implementation does nothing
+    return Mapper::get(dictionary(object), key.to<KeyType>());
 }
 
 //-------------------------------------------------------------------------------------------------
-void ClassVisitor::visit(const DictionaryProperty&)
+template <typename A>
+void DictionaryPropertyImpl<A>::setElement(const UserObject& object, const Value& key, const Value& value) const
 {
-    // The default implementation does nothing
+    Mapper::set(dictionary(object), key.to<KeyType>(), value.to<ElementType>());
 }
 
 //-------------------------------------------------------------------------------------------------
-void ClassVisitor::visit(const EnumProperty&)
+template <typename A>
+void DictionaryPropertyImpl<A>::removeElement(const UserObject& object, const Value& key) const
 {
-    // The default implementation does nothing
+    Mapper::remove(dictionary(object), key.to<KeyType>());
 }
 
 //-------------------------------------------------------------------------------------------------
-void ClassVisitor::visit(const UserProperty&)
+template <typename A>
+typename DictionaryPropertyImpl<A>::DictionaryType& DictionaryPropertyImpl<A>::dictionary(const UserObject& object) const
 {
-    // The default implementation does nothing
+    return m_accessor.get(object.get<typename A::ClassType>());
 }
 
-//-------------------------------------------------------------------------------------------------
-void ClassVisitor::visit(const Function&)
-{
-    // The default implementation does nothing
-}
-
-//-------------------------------------------------------------------------------------------------
-ClassVisitor::ClassVisitor()
-{
-    // Nothing to do
-}
+} // namespace detail
 
 } // namespace camp

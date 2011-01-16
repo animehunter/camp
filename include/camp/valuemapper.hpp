@@ -29,6 +29,7 @@
 #include <camp/enumobject.hpp>
 #include <camp/userobject.hpp>
 #include <camp/arraymapper.hpp>
+#include <camp/dictionarymapper.hpp>
 #include <camp/errors.hpp>
 #include <boost/lexical_cast.hpp>
 #include <boost/type_traits.hpp>
@@ -240,6 +241,16 @@ struct ValueMapper<const char[N]>
 {
     static const int type = camp::stringType;
     static std::string to(const char source[N]) {return std::string(source);}
+};
+
+/*
+ * Specialization of ValueMapper for dictionaries.
+ * No conversion allowed, only type mapping is provided.
+ */
+template <typename T>
+struct ValueMapper<T, typename boost::enable_if_c<camp::detail::IsDictionary<T>::value>::type>
+{
+    static const int type = camp::dictionaryType;
 };
 
 /*
