@@ -56,6 +56,13 @@ Value DictionaryPropertyImpl<A>::getElement(const UserObject& object, const Valu
 
 //-------------------------------------------------------------------------------------------------
 template <typename A>
+DictionaryIteratorPtr DictionaryPropertyImpl<A>::getIterator(const UserObject& object) const
+{
+    return Mapper::iterator(dictionary(object));
+}
+
+//-------------------------------------------------------------------------------------------------
+template <typename A>
 void DictionaryPropertyImpl<A>::setElement(const UserObject& object, const Value& key, const Value& value) const
 {
     Mapper::set(dictionary(object), key.to<KeyType>(), value.to<ElementType>());

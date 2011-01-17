@@ -27,6 +27,8 @@
 
 #include <camp/config.hpp>
 #include <camp/detail/yesnotype.hpp>
+#include <camp/dictionaryiterator.hpp>
+#include <camp/valuemapper.hpp>
 #include <map>
 #include <set>
 
@@ -41,8 +43,10 @@ namespace camp_ext
  *
  * \li \c KeyType: type of the key in the dictionary
  * \li \c ElementType: type of the elements stored in the dictionary
- * \li \c size(): retrieve the size of the array
+ * \li \c size(): retrieve the size of the dictionary
+ * \li \c exists(): query if an element exists
  * \li \c get(): get the value of an element
+ * \li \c iterator(): get an iterator to iterate over all elements of the dictionary
  * \li \c set(): sets an element
  * \li \c remove(): remove an element
  *
@@ -52,6 +56,7 @@ namespace camp_ext
  * By default, ValueMapper supports the following types of dictionaries:
  *
  * \li std::map
+ * \li std::set
  *
  * Here is an example of mapping for the std::map class:
  *
@@ -63,27 +68,38 @@ namespace camp_ext
  *     {
  *         typedef K KeyType;
  *         typedef E ElementType;
- *     
+ *
  *         static std::size_t size(const std::map<K, E>& dict)
  *         {
  *             return dict.size();
  *         }
- *     
- *         static const T& get(const std::map<K, E>& dict, const K& key)
+ *
+ *         static bool exists(const std::map<K, E>& dict, const K& key)
  *         {
- *             return dict[key];
+ *             return dict.count(key) == 1;
  *         }
- *     
- *         static void set(const std::map<K, E>& dict, const K& key, const T& value)
+ *
+ *         static const E& get(const std::map<K, E>& dict, const K& key)
+ *         {
+ *             return dict.find(key)->second;
+ *         }
+ *
+ *         static camp::DictionaryIteratorPtr iterator(std::map<K, E>& dict)
+ *         {
+ *             return camp::DictionaryIteratorPtr(
+ *                 new camp::MapDictionaryIterator<std::map<K, E> >(dict.begin(), dict));
+ *         }
+ *
+ *         static void set(std::map<K, E>& dict, const K& key, const E& value)
  *         {
  *             dict[key] = value;
  *         }
- *     
- *         static void remove(const std::map<K, E>& dict, const K& key)
+ *
+ *         static void remove(std::map<K, E>& dict, const K& key)
  *         {
  *             dict.erase(key);
  *         }
- *     }; 
+ *     } 
  * }
  * \endcode
  */
@@ -120,6 +136,12 @@ struct DictionaryMapper<std::map<K, E> >
         return dict.find(key)->second;
     }
 
+    static camp::DictionaryIteratorPtr iterator(std::map<K, E>& dict)
+    {
+        return camp::DictionaryIteratorPtr(
+            new camp::MapDictionaryIterator<std::map<K, E> >(dict.begin(), dict));
+    }
+
     static void set(std::map<K, E>& dict, const K& key, const E& value)
     {
         dict[key] = value;
@@ -153,6 +175,12 @@ struct DictionaryMapper<std::set<T> >
     static const T& get(const std::set<T>& dict, const T& key)
     {
         return *dict.find(key);
+    }
+
+    static camp::DictionaryIteratorPtr iterator(std::set<T>& dict)
+    {
+        return camp::DictionaryIteratorPtr(
+            new camp::SetDictionaryIterator<std::set<T> >(dict.begin(), dict));
     }
 
     static void set(std::set<T>& dict, const T& key, const T& value)
@@ -192,6 +220,20 @@ struct IsDictionary
 } // namespace detail
 
 } // namespace camp
+
+
+namespace camp_ext
+{
+    /*
+     * Specialization of ValueMapper for dictionaries.
+     * No conversion allowed, only type mapping is provided.
+     */
+    template <typename T>
+    struct ValueMapper<T, typename boost::enable_if_c<camp::detail::IsDictionary<T>::value>::type>
+    {
+        static const int type = camp::dictionaryType;
+    };
+}
 
 
 #endif // CAMP_DICTIONARYMAPPER_HPP

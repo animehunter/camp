@@ -96,6 +96,7 @@ set(CAMP_SRCS
     include/camp/classbuilder.inl
     include/camp/arraymapper.hpp
     include/camp/dictionarymapper.hpp
+    include/camp/dictionaryiterator.hpp
     include/camp/valuemapper.hpp
     include/camp/valuevisitor.hpp
     include/camp/detail/valueimpl.hpp

@@ -84,6 +84,16 @@ Value DictionaryProperty::get(const UserObject& object, const camp::Value& key) 
 }
 
 //-------------------------------------------------------------------------------------------------
+DictionaryIteratorPtr DictionaryProperty::iterator(const UserObject& object) const
+{
+    // Check if the property is readable
+    if (!readable(object))
+        CAMP_ERROR(ForbiddenRead(name()));
+
+    return getIterator(object);
+}
+
+//-------------------------------------------------------------------------------------------------
 void DictionaryProperty::set(const UserObject& object, const camp::Value& key, const Value& value) const
 {
     // Check if the property is writable
