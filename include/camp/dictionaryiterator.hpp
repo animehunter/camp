@@ -61,6 +61,10 @@ public:
      */
     virtual Value nextValue() = 0;
     /**
+     * \brief Increments the iterator
+     */
+    virtual void next() = 0;
+    /**
      * \brief Query if the iterator is still valid (not at the end)
      */
     virtual bool valid() = 0;
@@ -96,6 +100,10 @@ public:
     Value nextValue()
     {
         return (m_iterator++)->second;
+    }
+    void next()
+    {
+        ++m_iterator;
     }
     bool valid()
     {
@@ -135,6 +143,10 @@ public:
     Value nextValue()
     {
         return *(m_iterator++);
+    }
+    void next()
+    {
+        ++m_iterator;
     }
     bool valid()
     {

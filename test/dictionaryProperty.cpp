@@ -142,7 +142,9 @@ BOOST_AUTO_TEST_CASE(iterator)
     i = 0;
     while(iter->valid())
     {
-        BOOST_CHECK_EQUAL(iter->nextKey().to<MyType>().x, i);
+        BOOST_CHECK_EQUAL(iter->key().to<MyType>().x, i);
+        BOOST_CHECK_EQUAL(iter->value().to<MyType>().x, i);
+        iter->next();
         ++i;
     }
 }
