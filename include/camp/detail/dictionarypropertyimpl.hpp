@@ -69,14 +69,19 @@ protected:
     virtual std::size_t getSize(const UserObject& object) const;
 
     /**
+     * \see DictionaryProperty::queryExists
+     */
+    virtual bool queryExists(const UserObject& object, const Value& key) const;
+
+    /**
      * \see DictionaryProperty::getElement
      */
     virtual Value getElement(const UserObject& object, const Value& key) const;
 
     /**
-     * \see DictionaryProperty::queryExists
+     * \see DictionaryProperty::getIterator
      */
-    virtual bool queryExists(const UserObject& object, const Value& key) const;
+    virtual DictionaryIteratorPtr getIterator(const UserObject& object) const;
 
     /**
      * \see DictionaryProperty::setElement

@@ -26,6 +26,7 @@
 
 
 #include <camp/property.hpp>
+#include <camp/dictionaryiterator.hpp>
 
 
 namespace camp
@@ -105,6 +106,18 @@ public:
      * \throw ForbiddenRead property is not readable
      */
     Value get(const UserObject& object, const camp::Value& key) const;
+
+    /**
+     * \brief Get an iterator to iterate over all elements of the dictionary
+     *
+     * \param object Object
+     *
+     * \return Dictionary iterator
+     *
+     * \throw NullObject object is invalid
+     * \throw ForbiddenRead property is not readable
+     */
+    DictionaryIteratorPtr iterator(const UserObject& object) const;
 
     /**
      * \brief Set an element of the dictionary for a given object and key
@@ -192,6 +205,15 @@ protected:
      * \return Value of the index-th element
      */
     virtual Value getElement(const UserObject& object, const camp::Value& key) const = 0;
+
+     /**
+     * \brief Do the actual retrieval of a dictionary iterator.
+     *
+     * \param object Object
+     *
+     * \return Dictionary iterator
+     */
+    virtual DictionaryIteratorPtr getIterator(const UserObject& object) const = 0;
 
     /**
      * \brief Do the actual writing of an element

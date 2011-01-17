@@ -24,6 +24,7 @@
 #include <camp/classget.hpp>
 #include <camp/errors.hpp>
 #include <camp/dictionaryproperty.hpp>
+#include <camp/dictionaryiterator.hpp>
 #include <boost/test/unit_test.hpp>
 
 using namespace DictionaryPropertyTest;
@@ -110,6 +111,40 @@ BOOST_AUTO_TEST_CASE(get)
     BOOST_CHECK_EQUAL(setDict->get(myObject, MyType(3)), camp::Value(*myObject.stdSet.find(MyType(3))));
     BOOST_CHECK_EQUAL(setDict->get(myObject, MyType(4)), camp::Value(*myObject.stdSet.find(MyType(4))));
     BOOST_CHECK_THROW(setDict->get(myObject, MyType(5)), camp::ElementNotFound);
+}
+
+//-----------------------------------------------------------------------------
+BOOST_AUTO_TEST_CASE(iterator)
+{
+    camp::DictionaryIteratorPtr iter = mapDict->iterator(myObject);
+    BOOST_CHECK_EQUAL(iter->nextValue(), camp::Value(myObject.stdMap["0"]));
+    BOOST_CHECK_EQUAL(iter->nextValue(), camp::Value(myObject.stdMap["1"]));
+    BOOST_CHECK_EQUAL(iter->nextValue(), camp::Value(myObject.stdMap["2"]));
+    BOOST_CHECK_EQUAL(iter->nextValue(), camp::Value(myObject.stdMap["3"]));
+    BOOST_CHECK_EQUAL(iter->nextValue(), camp::Value(myObject.stdMap["4"]));
+
+    iter = mapDict->iterator(myObject);
+    unsigned short i = 0;
+    while(iter->valid())
+    {
+        BOOST_CHECK_EQUAL(iter->nextKey().to<std::string>(), boost::lexical_cast<std::string>(i));
+        ++i;
+    }
+
+    iter = setDict->iterator(myObject);
+    BOOST_CHECK_EQUAL(iter->nextValue(), camp::Value(*myObject.stdSet.find(MyType(0))));
+    BOOST_CHECK_EQUAL(iter->nextValue(), camp::Value(*myObject.stdSet.find(MyType(1))));
+    BOOST_CHECK_EQUAL(iter->nextValue(), camp::Value(*myObject.stdSet.find(MyType(2))));
+    BOOST_CHECK_EQUAL(iter->nextValue(), camp::Value(*myObject.stdSet.find(MyType(3))));
+    BOOST_CHECK_EQUAL(iter->nextValue(), camp::Value(*myObject.stdSet.find(MyType(4))));
+
+    iter = setDict->iterator(myObject);
+    i = 0;
+    while(iter->valid())
+    {
+        BOOST_CHECK_EQUAL(iter->nextKey().to<MyType>().x, i);
+        ++i;
+    }
 }
 
 //-----------------------------------------------------------------------------
