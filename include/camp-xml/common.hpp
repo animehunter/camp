@@ -26,6 +26,7 @@
 #include <camp/userobject.hpp>
 #include <camp/value.hpp>
 #include <camp/arrayproperty.hpp>
+#include <camp/dictionaryproperty.hpp>
 #include <string>
 
 namespace camp
