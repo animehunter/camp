@@ -150,6 +150,24 @@ struct ValueMapper<bool>
 };
 
 /*
+ * Specialization of ValueMapper for unsigned char
+ */
+template <>
+struct ValueMapper<unsigned char>
+{
+    static const int type = camp::intType;
+    static long to(unsigned char source) {return static_cast<unsigned char>(source);}
+
+    static unsigned char from(bool source)                    {return static_cast<unsigned char>(source);}
+    static unsigned char from(long source)                    {return static_cast<unsigned char>(source);}
+    static unsigned char from(double source)                  {return static_cast<unsigned char>(source);}
+    // Lexical cast to unsigned short to make sure it doesn't cast to a character, but the actual number.
+    static unsigned char from(const std::string& source)      {return static_cast<unsigned char>(boost::lexical_cast<unsigned short>(source));}
+    static unsigned char from(const camp::EnumObject& source) {return static_cast<unsigned char>(source.value());}
+    static unsigned char from(const camp::UserObject&)        {CAMP_ERROR(camp::BadType(camp::userType, camp::intType));}
+};
+
+/*
  * Specialization of ValueMapper for integers
  */
 template <typename T>

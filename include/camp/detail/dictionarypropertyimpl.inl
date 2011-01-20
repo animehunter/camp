@@ -82,6 +82,20 @@ typename DictionaryPropertyImpl<A>::DictionaryType& DictionaryPropertyImpl<A>::d
     return m_accessor.get(object.get<typename A::ClassType>());
 }
 
+//-------------------------------------------------------------------------------------------------
+template <typename A>
+const Class& DictionaryPropertyImpl<A>::getKeyClass() const
+{
+    return getKeyClassImpl<StaticTypeId<KeyType>::defined>();
+}
+
+//-------------------------------------------------------------------------------------------------
+template <typename A>
+const Class& DictionaryPropertyImpl<A>::getElementClass() const
+{
+    return getElementClassImpl<StaticTypeId<ElementType>::defined>();
+}
+
 } // namespace detail
 
 } // namespace camp

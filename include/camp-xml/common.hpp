@@ -48,9 +48,11 @@ namespace detail
  * \param node Parent for the generated XML nodes
  * \param tag Tag to include or exclude from the serialization process.
  * \param include Set this to true to make the tag an including tag, false for excluding tag.
+ * \param throwExceptions Set this to false to ignore thrown exceptions.
  */
 template <typename Proxy>
-void serialize(const UserObject& object, typename Proxy::NodeType node, const Value& tag, bool include = false);
+void serialize(const UserObject& object, typename Proxy::NodeType node, const Value& tag, 
+    bool include, bool throwExceptions);
 
 /**
  * \brief Deserialize a CAMP object from XML elements
@@ -66,9 +68,11 @@ void serialize(const UserObject& object, typename Proxy::NodeType node, const Va
  * \param node XML node to parse
  * \param tag Tag to include or exclude from the serialization process.
  * \param include Set this to true to make the tag an including tag, false for excluding tag.
+ * \param throwExceptions Set this to false to ignore thrown exceptions.
  */
 template <typename Proxy>
-void deserialize(const UserObject& object, typename Proxy::NodeType node, const Value& tag, bool include = false);
+void deserialize(const UserObject& object, typename Proxy::NodeType node, const Value& tag, 
+    bool include, bool throwExceptions);
 
 } // namespace detail
 

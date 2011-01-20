@@ -174,7 +174,17 @@ public:
      *
      * \return Connection object to block or disconnect the signal-slot connection.
      */
-    boost::signals2::connection connectInsertion(const OnInsert::slot_type& slot) const;
+    boost::signals2::connection connectInserted(const OnInsert::slot_type& slot) const;
+
+    /**
+     * \brief Connects a slot to the non-writable value inserted signal. This is only called when
+     * a value is inserted while the object is not writable.
+     * 
+     * \param slot The slot to connect to the signal.
+     *
+     * \return Connection object to block or disconnect the signal-slot connection.
+     */
+    boost::signals2::connection connectInsertedNonwritable(const OnInsert::slot_type& slot) const;
 
 protected:
 
@@ -253,7 +263,8 @@ private:
 
     Type m_elementType; ///< Type of the individual elements of the array
     bool m_dynamic; ///< Is the array dynamic?
-    mutable OnInsert m_signal; ///< Insertion signal
+    mutable OnInsert m_inserted_signal; ///< Inserted signal
+    mutable OnInsert m_inserted_nonwritable_signal; ///< Non-writable inserted signal
 };
 
 } // namespace camp

@@ -39,8 +39,6 @@ class CAMP_API DictionaryProperty : public Property
 {
 public:
 
-    typedef boost::signals2::signal<void (const UserObject&, const DictionaryProperty&, const Value&)> OnInsert;
-
     /**
      * \brief Construct the property from its description
      *
@@ -63,11 +61,29 @@ public:
     Type keyType() const;
 
     /**
+     * \brief Gets the class of the key, if it is a user type.
+     *
+     * \return Class of the key type.
+     * 
+     * \throw ClassNotFound key is not a user type.
+     */
+    const Class& keyClass() const;
+
+    /**
      * \brief Get the type of the dictionary elements
      *
      * \return Type of elements
      */
     Type elementType() const;
+
+    /**
+     * \brief Gets the class of the element, if it is a user type.
+     *
+     * \return Class of the key element.
+     * 
+     * \throw ClassNotFound element is not a user type.
+     */
+    const Class& elementClass() const;
 
     /**
      * \brief Get the current size of the array
@@ -152,15 +168,6 @@ public:
      */
     virtual void accept(ClassVisitor& visitor) const;
 
-    /**
-     * \brief Connects a slot to the value inserted signal.
-     * 
-     * \param slot The slot to connect to the signal.
-     *
-     * \return Connection object to block or disconnect the signal-slot connection.
-     */
-    boost::signals2::connection connectInsertion(const OnInsert::slot_type& slot) const;
-
 protected:
 
     /**
@@ -236,11 +243,24 @@ protected:
      */
     virtual void removeElement(const UserObject& object, const camp::Value& key) const = 0;
 
+    /**
+     * \brief Do the actual retrieval of the key class.
+     *
+     * \return Class of the key type.
+     */
+    virtual const Class& getKeyClass() const = 0;
+
+    /**
+     * \brief Do the actual retrieval of the element class.
+     *
+     * \return Class of the element type.
+     */
+    virtual const Class& getElementClass() const = 0;
+
 private:
 
     Type m_keyType; ///< Type of the keys of the dictionary
     Type m_elementType; ///< Type of the elements of the dictionary
-    mutable OnInsert m_signal; ///< Insertion signal
 };
 
 } // namespace camp

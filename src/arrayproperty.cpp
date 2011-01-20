@@ -116,7 +116,10 @@ void ArrayProperty::insert(const UserObject& object, std::size_t before, const V
 
     // Check if the property is writable
     if (!writable(object))
+    {
+        m_inserted_nonwritable_signal(object, *this, value);
         CAMP_ERROR(ForbiddenWrite(name()));
+    }
 
     // Check if the index is in range
     std::size_t range = size(object) + 1;
@@ -124,7 +127,7 @@ void ArrayProperty::insert(const UserObject& object, std::size_t before, const V
         CAMP_ERROR(OutOfRange(before, range));
 
     // Signal before inserting the value so slots can throw an exception to prevent insertion.
-    m_signal(object, *this, value);
+    m_inserted_signal(object, *this, value);
 
     return insertElement(object, before, value);
 }
@@ -155,9 +158,15 @@ void ArrayProperty::accept(ClassVisitor& visitor) const
 }
 
 //-------------------------------------------------------------------------------------------------
-boost::signals2::connection ArrayProperty::connectInsertion(const OnInsert::slot_type& slot) const
+boost::signals2::connection ArrayProperty::connectInserted(const OnInsert::slot_type& slot) const
 {
-    return m_signal.connect(slot);
+    return m_inserted_signal.connect(slot);
+}
+
+//-------------------------------------------------------------------------------------------------
+boost::signals2::connection ArrayProperty::connectInsertedNonwritable(const OnInsert::slot_type& slot) const
+{
+    return m_inserted_nonwritable_signal.connect(slot);
 }
 
 //-------------------------------------------------------------------------------------------------
