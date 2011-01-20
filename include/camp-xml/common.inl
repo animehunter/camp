@@ -28,229 +28,249 @@ namespace detail
 {
 //-------------------------------------------------------------------------------------------------
 template <typename Proxy>
-void serialize(const UserObject& object, typename Proxy::NodeType node, const Value& tag, bool include)
+void serialize(const UserObject& object, typename Proxy::NodeType node, const Value& tag, 
+    bool include, bool throwExceptions)
 {
     // Iterate over the object's properties using its metaclass
     const Class& metaclass = object.getClass();
     for (std::size_t i = 0; i < metaclass.propertyCount(); ++i)
     {
-        const Property& property = metaclass.property(i);
-
-        // If the property has the exclude tag, ignore it
-        if ((tag != Value::nothing) && include?!property.hasTag(tag):property.hasTag(tag))
-            continue;
-
-        // Create a child node for the new property
-        typename Proxy::NodeType child = Proxy::addChild(node, property.name());
-        if (!Proxy::isValid(child))
-            continue;
-
-        if (property.type() == userType)
+        try
         {
-            // The current property is a composed type: serialize it recursively
-            serialize<Proxy>(property.get(object).to<UserObject>(), child, tag, include);
-        }
-        else if (property.type() == arrayType)
-        {
-            // The current property is an array
-            const ArrayProperty& arrayProperty = static_cast<const ArrayProperty&>(property);
+            const Property& property = metaclass.property(i);
 
-            // Iterate over the array elements
-            std::size_t count = arrayProperty.size(object);
-            for (std::size_t j = 0; j < count; ++j)
+            // If the property has the exclude tag, ignore it
+            if ((tag != Value::nothing) && include?!property.hasTag(tag):property.hasTag(tag))
+                continue;
+
+            // Create a child node for the new property
+            typename Proxy::NodeType child = Proxy::addChild(node, property.name());
+            if (!Proxy::isValid(child))
+                continue;
+
+            if (property.type() == userType)
             {
-                // Add a new XML node for each array element
-                typename Proxy::NodeType item = Proxy::addChild(child, "item");
-                if (Proxy::isValid(item))
-                {
-                    if (arrayProperty.elementType() == userType)
-                    {
-                        // The array elements are composed objects: serialize them recursively
-                        serialize<Proxy>(arrayProperty.get(object, j).to<UserObject>(), item, tag, 
-                            include);
-                    }
-                    else
-                    {
-                        // The array elements are simple properties: write them as the text of their XML node
-                        Proxy::setText(item, arrayProperty.get(object, j));
-                    }
-                }
+                // The current property is a composed type: serialize it recursively
+                serialize<Proxy>(property.get(object).to<UserObject>(), child, tag, include, 
+                    throwExceptions);
             }
-        }
-        else if (property.type() == dictionaryType)
-        {
-            // The current property is a dictionary
-            const DictionaryProperty& dictionaryProperty = static_cast<const DictionaryProperty&>(property);
-
-            // Iterate over the dictionary elements
-            DictionaryIteratorPtr j = dictionaryProperty.iterator(object);
-            while(j->valid())
+            else if (property.type() == arrayType)
             {
-                // Add a new XML node for each dictionary element
-                typename Proxy::NodeType item = Proxy::addChild(child, "item");
-                if (Proxy::isValid(item))
+                // The current property is an array
+                const ArrayProperty& arrayProperty = static_cast<const ArrayProperty&>(property);
+
+                // Iterate over the array elements
+                std::size_t count = arrayProperty.size(object);
+                for (std::size_t j = 0; j < count; ++j)
                 {
-                    // Serialize element key
-                    typename Proxy::NodeType key = Proxy::addChild(item, "key");
-                    if (Proxy::isValid(key))
+                    // Add a new XML node for each array element
+                    typename Proxy::NodeType item = Proxy::addChild(child, "item");
+                    if (Proxy::isValid(item))
                     {
-                        if (dictionaryProperty.keyType() == userType)
+                        if (arrayProperty.elementType() == userType)
                         {
-                            // The dictionary keys are composed objects: serialize them recursively
-                            serialize<Proxy>(j->key().to<UserObject>(), key, tag, include);
+                            // The array elements are composed objects: serialize them recursively
+                            serialize<Proxy>(arrayProperty.get(object, j).to<UserObject>(), item, tag, 
+                                include, throwExceptions);
                         }
                         else
                         {
-                            // The dictionary keys are simple properties: write them as the text of their XML node
-                            Proxy::setText(key, j->key());
-                        }
-                    }
-
-                    // Serialize element value
-                    typename Proxy::NodeType value = Proxy::addChild(item, "value");
-                    if (Proxy::isValid(value))
-                    {
-                        if (dictionaryProperty.elementType() == userType)
-                        {
-                            // The dictionary elements are composed objects: serialize them recursively
-                            serialize<Proxy>(j->value().to<UserObject>(), value, tag, include);
-                        }
-                        else
-                        {
-                            // The dictionary elements are simple properties: write them as the text of their XML node
-                            Proxy::setText(value, j->value());
+                            // The array elements are simple properties: write them as the text of their XML node
+                            Proxy::setText(item, arrayProperty.get(object, j));
                         }
                     }
                 }
+            }
+            else if (property.type() == dictionaryType)
+            {
+                // The current property is a dictionary
+                const DictionaryProperty& dictionaryProperty = static_cast<const DictionaryProperty&>(property);
 
-                j->next();
+                // Iterate over the dictionary elements
+                DictionaryIteratorPtr j = dictionaryProperty.iterator(object);
+                while(j->valid())
+                {
+                    // Add a new XML node for each dictionary element
+                    typename Proxy::NodeType item = Proxy::addChild(child, "item");
+                    if (Proxy::isValid(item))
+                    {
+                        // Serialize element key
+                        typename Proxy::NodeType key = Proxy::addChild(item, "key");
+                        if (Proxy::isValid(key))
+                        {
+                            if (dictionaryProperty.keyType() == userType)
+                            {
+                                // The dictionary keys are composed objects: serialize them recursively
+                                serialize<Proxy>(j->key().to<UserObject>(), key, tag, include, 
+                                    throwExceptions);
+                            }
+                            else
+                            {
+                                // The dictionary keys are simple properties: write them as the text of their XML node
+                                Proxy::setText(key, j->key());
+                            }
+                        }
+
+                        // Serialize element value
+                        typename Proxy::NodeType value = Proxy::addChild(item, "value");
+                        if (Proxy::isValid(value))
+                        {
+                            if (dictionaryProperty.elementType() == userType)
+                            {
+                                // The dictionary elements are composed objects: serialize them recursively
+                                serialize<Proxy>(j->value().to<UserObject>(), value, tag, include, 
+                                    throwExceptions);
+                            }
+                            else
+                            {
+                                // The dictionary elements are simple properties: write them as the text of their XML node
+                                Proxy::setText(value, j->value());
+                            }
+                        }
+                    }
+
+                    j->next();
+                }
+            }
+            else
+            {
+                // The current property is a simple property: write its value as the node's text
+                Proxy::setText(child, property.get(object));
             }
         }
-        else
+        catch(camp::Error e)
         {
-            // The current property is a simple property: write its value as the node's text
-            Proxy::setText(child, property.get(object));
+        	if (throwExceptions) throw e;
         }
     }
 }
 
 //-------------------------------------------------------------------------------------------------
 template <typename Proxy>
-void deserialize(const UserObject& object, typename Proxy::NodeType node, const Value& tag, bool include)
+void deserialize(const UserObject& object, typename Proxy::NodeType node, const Value& tag,
+    bool include, bool throwExceptions)
 {
     // Iterate over the object's properties using its metaclass
     const Class& metaclass = object.getClass();
     for (std::size_t i = 0; i < metaclass.propertyCount(); ++i)
     {
-        const Property& property = metaclass.property(i);
-
-        // If the property has the exclude tag, ignore it
-        if ((tag != Value::nothing) && include?!property.hasTag(tag):property.hasTag(tag))
-            continue;
-
-        // Find the child node corresponding to the new property
-        typename Proxy::NodeType child = Proxy::findFirstChild(node, property.name());
-        if (!Proxy::isValid(child))
-            continue;
-
-        if (property.type() == userType)
+        try
         {
-            // The current property is a composed type: deserialize it recursively
-            deserialize<Proxy>(property.get(object).to<UserObject>(), child, tag, include);
+	        const Property& property = metaclass.property(i);
+	
+	        // If the property has the exclude tag, ignore it
+	        if ((tag != Value::nothing) && include?!property.hasTag(tag):property.hasTag(tag))
+	            continue;
+	
+	        // Find the child node corresponding to the new property
+	        typename Proxy::NodeType child = Proxy::findFirstChild(node, property.name());
+	        if (!Proxy::isValid(child))
+	            continue;
+	
+	        if (property.type() == userType)
+	        {
+	            // The current property is a composed type: deserialize it recursively
+	            deserialize<Proxy>(property.get(object).to<UserObject>(), child, tag, include, 
+                    throwExceptions);
+	        }
+	        else if (property.type() == arrayType)
+	        {
+	            // The current property is an array
+	            const ArrayProperty& arrayProperty = static_cast<const ArrayProperty&>(property);
+	
+	            // Iterate over the child XML node and extract all the array elements
+	            std::size_t index = 0;
+	            for (typename Proxy::NodeType item = Proxy::findFirstChild(child, "item")
+	                ; Proxy::isValid(item)
+	                ; item = Proxy::findNextSibling(item, "item"))
+	            {
+	                // Make sure that there are enough elements in the array
+	                std::size_t count = arrayProperty.size(object);
+	                if (index >= count)
+	                {
+	                    if (arrayProperty.dynamic())
+	                        arrayProperty.resize(object, index + 1);
+	                    else
+	                        break;
+	                }
+	
+	                if (arrayProperty.elementType() == userType)
+	                {
+	                    // The array elements are composed objects: deserialize them recursively
+	                    deserialize<Proxy>(arrayProperty.get(object, index).to<UserObject>(), item, 
+                            tag, include, throwExceptions);
+	                }
+	                else
+	                {
+	                    // The array elements are simple properties: read their value from the text of their XML node
+	                    arrayProperty.set(object, index, Proxy::getText(item));
+	                }
+	
+	                index++;
+	            }
+	        }
+	        else if (property.type() == dictionaryType)
+	        {
+	            // The current property is a dictionary
+	            const DictionaryProperty& dictionaryProperty = static_cast<const DictionaryProperty&>(property);
+	
+	            // Iterate over the child XML node and extract all the array elements
+	            for (typename Proxy::NodeType item = Proxy::findFirstChild(child, "item")
+	                ; Proxy::isValid(item)
+	                ; item = Proxy::findNextSibling(item, "item"))
+	            {
+	                // Deserialize element key
+	                Value keyValue;
+	                typename Proxy::NodeType key = Proxy::findFirstChild(item, "key");
+	                if (Proxy::isValid(key))
+	                {
+	                    if (dictionaryProperty.keyType() == userType)
+	                    {
+	                        // The dictionary keys are composed objects: deserialize them recursively
+	                        UserObject keyObject = dictionaryProperty.keyClass().construct();
+	                        deserialize<Proxy>(keyObject, key, tag, include, throwExceptions);
+	                        keyValue = keyObject;
+	                    }
+	                    else
+	                    {
+	                        // The dictionary keys are simple properties: read their value from the text of their XML node
+	                        keyValue = Proxy::getText(key);
+	                    }
+	                }
+	
+	                // Deserialize element value
+	                typename Proxy::NodeType value = Proxy::findFirstChild(item, "value");
+	                if (Proxy::isValid(value))
+	                {
+	                    if (dictionaryProperty.elementType() == userType)
+	                    {
+	                        // Add key to dictionary before deserializing the value
+	                        if(property.hasTag("AddFunction") && !dictionaryProperty.exists(object, keyValue))
+	                        {
+	                            metaclass.function(property.tag("AddFunction").to<std::string>()).call(object, keyValue);
+	                        }
+	
+	                        // The array elements are composed objects: deserialize them recursively
+	                        deserialize<Proxy>(dictionaryProperty.get(object, keyValue).to<UserObject>(), value, tag, 
+	                            include, throwExceptions);
+	                    }
+	                    else
+	                    {
+	                        // The array elements are simple properties: read their value from the text of their XML node
+	                        dictionaryProperty.set(object, keyValue, Proxy::getText(value));
+	                    }
+	                }
+	            }
+	        }
+	        else
+	        {
+	            // The current property is a simple property: read its value from the node's text
+	            property.set(object, Proxy::getText(child));
+	        }
         }
-        else if (property.type() == arrayType)
+        catch(camp::Error e)
         {
-            // The current property is an array
-            const ArrayProperty& arrayProperty = static_cast<const ArrayProperty&>(property);
-
-            // Iterate over the child XML node and extract all the array elements
-            std::size_t index = 0;
-            for (typename Proxy::NodeType item = Proxy::findFirstChild(child, "item")
-                ; Proxy::isValid(item)
-                ; item = Proxy::findNextSibling(item, "item"))
-            {
-                // Make sure that there are enough elements in the array
-                std::size_t count = arrayProperty.size(object);
-                if (index >= count)
-                {
-                    if (arrayProperty.dynamic())
-                        arrayProperty.resize(object, index + 1);
-                    else
-                        break;
-                }
-
-                if (arrayProperty.elementType() == userType)
-                {
-                    // The array elements are composed objects: deserialize them recursively
-                    deserialize<Proxy>(arrayProperty.get(object, index).to<UserObject>(), item, tag, 
-                        include);
-                }
-                else
-                {
-                    // The array elements are simple properties: read their value from the text of their XML node
-                    arrayProperty.set(object, index, Proxy::getText(item));
-                }
-
-                index++;
-            }
-        }
-        else if (property.type() == dictionaryType)
-        {
-            // The current property is a dictionary
-            const DictionaryProperty& dictionaryProperty = static_cast<const DictionaryProperty&>(property);
-
-            // Iterate over the child XML node and extract all the array elements
-            for (typename Proxy::NodeType item = Proxy::findFirstChild(child, "item")
-                ; Proxy::isValid(item)
-                ; item = Proxy::findNextSibling(item, "item"))
-            {
-                // Deserialize element key
-                Value keyValue;
-                typename Proxy::NodeType key = Proxy::findFirstChild(item, "key");
-                if (Proxy::isValid(key))
-                {
-                    if (dictionaryProperty.keyType() == userType)
-                    {
-                        // The dictionary keys are composed objects: deserialize them recursively
-                        UserObject keyObject;
-                        deserialize<Proxy>(keyObject, key, tag, include);
-                        keyValue = keyObject;
-                    }
-                    else
-                    {
-                        // The dictionary keys are simple properties: read their value from the text of their XML node
-                        keyValue = Proxy::getText(key);
-                    }
-                }
-
-                // Deserialize element value
-                typename Proxy::NodeType value = Proxy::findFirstChild(item, "value");
-                if (Proxy::isValid(value))
-                {
-                    if (dictionaryProperty.elementType() == userType)
-                    {
-                        // Add key to dictionary before deserializing the value
-                        if(property.hasTag("AddFunction") && !dictionaryProperty.exists(object, keyValue))
-                        {
-                            metaclass.function(property.tag("AddFunction").to<std::string>()).call(object, keyValue);
-                        }
-
-                        // The array elements are composed objects: deserialize them recursively
-                        deserialize<Proxy>(dictionaryProperty.get(object, keyValue).to<UserObject>(), value, tag, 
-                            include);
-                    }
-                    else
-                    {
-                        // The array elements are simple properties: read their value from the text of their XML node
-                        dictionaryProperty.set(object, keyValue, Proxy::getText(value));
-                    }
-                }
-            }
-        }
-        else
-        {
-            // The current property is a simple property: read its value from the node's text
-            property.set(object, Proxy::getText(child));
+            if (throwExceptions) throw e;
         }
     }
 }

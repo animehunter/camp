@@ -48,9 +48,21 @@ Type DictionaryProperty::keyType() const
 }
 
 //-------------------------------------------------------------------------------------------------
+const Class& DictionaryProperty::keyClass() const
+{
+    return getKeyClass();
+}
+
+//-------------------------------------------------------------------------------------------------
 Type DictionaryProperty::elementType() const
 {
     return m_elementType;
+}
+
+//-------------------------------------------------------------------------------------------------
+const Class& DictionaryProperty::elementClass() const
+{
+    return getElementClass();
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -117,12 +129,6 @@ void DictionaryProperty::remove(const UserObject& object, const camp::Value& key
 void DictionaryProperty::accept(ClassVisitor& visitor) const
 {
     visitor.visit(*this);
-}
-
-//-------------------------------------------------------------------------------------------------
-boost::signals2::connection DictionaryProperty::connectInsertion(const OnInsert::slot_type& slot) const
-{
-    return m_signal.connect(slot);
 }
 
 //-------------------------------------------------------------------------------------------------

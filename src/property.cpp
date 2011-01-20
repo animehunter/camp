@@ -73,10 +73,13 @@ void Property::set(const UserObject& object, const Value& value) const
 {
     // Check if the property is writable
     if (!writable(object))
+    {
+        m_setted_nonwritable_signal(object, *this, value);
         CAMP_ERROR(ForbiddenWrite(name()));
+    }
 
     // Signal before setting the property so slots can throw an exception to prevent setting.
-    m_signal(object, *this, value);
+    m_setted_signal(object, *this, value);
 
     // Here we don't call setValue directly, we rather let the user object do it
     // and add any processing needed for proper propagation of the modification
@@ -90,9 +93,15 @@ void Property::accept(ClassVisitor& visitor) const
 }
 
 //-------------------------------------------------------------------------------------------------
-boost::signals2::connection Property::connect(const OnSet::slot_type& slot) const
+boost::signals2::connection Property::connectSetted(const OnSet::slot_type& slot) const
 {
-    return m_signal.connect(slot);
+    return m_setted_signal.connect(slot);
+}
+
+//-------------------------------------------------------------------------------------------------
+boost::signals2::connection Property::connectSettedNonwritable(const OnSet::slot_type& slot) const
+{
+    return m_setted_nonwritable_signal.connect(slot);
 }
 
 //-------------------------------------------------------------------------------------------------

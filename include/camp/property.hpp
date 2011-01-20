@@ -133,7 +133,17 @@ public:
      *
      * \return Connection object to block or disconnect the signal-slot connection.
      */
-    boost::signals2::connection connect(const OnSet::slot_type& slot) const;
+    boost::signals2::connection connectSetted(const OnSet::slot_type& slot) const;
+
+    /**
+     * \brief Connects a slot to the non-writable property setted signal. This is only called when
+     * a value is set while the object is not writable.
+     * 
+     * \param slot The slot to connect to the signal.
+     *
+     * \return Connection object to block or disconnect the signal-slot connection.
+     */
+    boost::signals2::connection connectSettedNonwritable(const OnSet::slot_type& slot) const;
 
 protected:
 
@@ -189,7 +199,8 @@ private:
     Type m_type; ///< Type of the property
     detail::Getter<bool> m_readable; ///< Accessor to get the readable state of the property
     detail::Getter<bool> m_writable; ///< Accessor to get the writable state of the property
-    mutable OnSet m_signal; ///< Setter signal
+    mutable OnSet m_setted_signal; ///< Setter signal
+    mutable OnSet m_setted_nonwritable_signal; ///< Non-writable setter signal
 };
 
 } // namespace camp

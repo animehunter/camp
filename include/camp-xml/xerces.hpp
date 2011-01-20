@@ -127,10 +127,12 @@ struct Xerces
  * \param node Parent for the generated XML nodes
  * \param tag Tag to include or exclude from the serialization process.
  * \param include Set this to true to make the tag an including tag, false for excluding tag.
+ * \param throwExceptions Set this to false to ignore thrown exceptions.
  */
-inline void serialize(const UserObject& object, xercesc::DOMElement* node, const Value& tag = Value::nothing, bool include = false)
+inline void serialize(const UserObject& object, xercesc::DOMElement* node, const Value& tag = Value::nothing,
+    bool include = false, bool throwExceptions = true)
 {
-    detail::serialize<detail::Xerces>(object, node, tag, include);
+    detail::serialize<detail::Xerces>(object, node, tag, include, throwExceptions);
 }
 
 /**
@@ -150,12 +152,13 @@ inline void serialize(const UserObject& object, xercesc::DOMElement* node, const
  * \param node XML node to parse
  * \param tag Tag to include or exclude from the serialization process.
  * \param include Set this to true to make the tag an including tag, false for excluding tag.
+ * \param throwExceptions Set this to false to ignore thrown exceptions.
  */
-inline void deserialize(const UserObject& object, xercesc::DOMElement* node, const Value& tag = Value::nothing, bool include = false)
+inline void deserialize(const UserObject& object, xercesc::DOMElement* node, const Value& tag = Value::nothing,
+    bool include = false, bool throwExceptions = true)
 {
-    detail::deserialize<detail::Xerces>(object, node, tag, include);
+    detail::deserialize<detail::Xerces>(object, node, tag, include, throwExceptions);
 }
-
 
 } // namespace xml
 
