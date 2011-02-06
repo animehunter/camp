@@ -30,6 +30,7 @@ UserObject::UserObject(const T& object)
     , m_holder()
     , m_parent()
     , m_child(0)
+    , m_copy(false)
 {
     typedef detail::ObjectTraits<T&> Traits;
     typedef detail::ObjectHolderByRef<typename Traits::DataType> Holder;
@@ -88,6 +89,7 @@ UserObject UserObject::copy(const T& object)
     UserObject userObject;
     userObject.m_class = &classByType<T>();
     userObject.m_holder.reset(new Holder(Traits::getPointer(object)));
+    userObject.m_copy = true;
 
     return userObject;
 }

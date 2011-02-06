@@ -39,6 +39,7 @@ UserObject::UserObject()
     , m_holder()
     , m_parent()
     , m_child(0)
+    , m_copy(false)
 {
 }
 
@@ -48,6 +49,7 @@ UserObject::UserObject(const UserObject& parent, const UserProperty& member)
     , m_holder()
     , m_parent(new ParentObject(parent, member))
     , m_child(0)
+    , m_copy(false)
 {
     m_parent->object.m_child = this;
 }
@@ -55,8 +57,9 @@ UserObject::UserObject(const UserObject& parent, const UserProperty& member)
 //-------------------------------------------------------------------------------------------------
 UserObject::UserObject(const UserObject& copy)
     : m_class(copy.m_class)
-    , m_holder(copy.m_holder)
+    , m_holder(copy.m_copy ? boost::shared_ptr<detail::AbstractObjectHolder>(copy.m_holder->copy()) : copy.m_holder)
     , m_parent(copy.m_parent ? new ParentObject(copy.m_parent->object, copy.m_parent->member) : 0)
+    , m_copy(copy.m_copy)
 {
     if (m_parent)
         m_parent->object.m_child = this;
@@ -91,6 +94,7 @@ UserObject UserObject::copy() const
     UserObject userObject;
     userObject.m_class = m_class;
     userObject.m_holder.reset(copyHolder);
+    userObject.m_copy = true;
     return userObject;
 }
 

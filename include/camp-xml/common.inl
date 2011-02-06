@@ -169,9 +169,29 @@ void deserialize(const UserObject& object, typename Proxy::NodeType node, const 
 	
 	        if (property.type() == userType)
 	        {
-	            // The current property is a composed type: deserialize it recursively
-	            deserialize<Proxy>(property.get(object).to<UserObject>(), child, tag, include, 
-                    throwExceptions);
+                if(property.hasTag("DeserializeCopySet"))
+                {
+                    UserObject userObject = property.get(object).to<UserObject>();
+
+                    // The current property is a composed type: deserialize it recursively
+                    deserialize<Proxy>(userObject, child, tag, include, throwExceptions);
+
+                    // Set the recursively deserialized user object
+                    property.set(object, userObject);
+                }
+                else
+                {
+	                // The current property is a composed type: deserialize it recursively
+	                deserialize<Proxy>(property.get(object).to<UserObject>(), child, tag, include, 
+                        throwExceptions);
+
+                    // Re set the property if it has the DeserializeReSet tag
+                    if(property.hasTag("DeserializeReSet"))
+                    {
+                        Value val = property.get(object);
+                        property.set(object, val);
+                    }
+                }
 	        }
 	        else if (property.type() == arrayType)
 	        {
@@ -196,9 +216,29 @@ void deserialize(const UserObject& object, typename Proxy::NodeType node, const 
 	
 	                if (arrayProperty.elementType() == userType)
 	                {
-	                    // The array elements are composed objects: deserialize them recursively
-	                    deserialize<Proxy>(arrayProperty.get(object, index).to<UserObject>(), item, 
-                            tag, include, throwExceptions);
+                        if(property.hasTag("DeserializeCopySet"))
+                        {
+                            UserObject userObject = arrayProperty.get(object, index).to<UserObject>();
+
+                            // The array elements are composed objects: deserialize them recursively
+                            deserialize<Proxy>(userObject, child, tag, include, throwExceptions);
+
+                            // Set the recursively deserialized user object
+                            arrayProperty.set(object, index, userObject);
+                        }
+                        else
+                        {
+                            // The array elements are composed objects: deserialize them recursively
+                            deserialize<Proxy>(arrayProperty.get(object, index).to<UserObject>(), 
+                                item, tag, include, throwExceptions);
+
+                            // Re set the property if it has the DeserializeReSet tag
+                            if(property.hasTag("DeserializeReSet"))
+                            {
+                                Value val = arrayProperty.get(object, index);
+                                arrayProperty.set(object, index, val);
+                            }
+                        }
 	                }
 	                else
 	                {
@@ -249,10 +289,30 @@ void deserialize(const UserObject& object, typename Proxy::NodeType node, const 
 	                        {
 	                            metaclass.function(property.tag("AddFunction").to<std::string>()).call(object, keyValue);
 	                        }
-	
-	                        // The array elements are composed objects: deserialize them recursively
-	                        deserialize<Proxy>(dictionaryProperty.get(object, keyValue).to<UserObject>(), value, tag, 
-	                            include, throwExceptions);
+
+                            if(property.hasTag("DeserializeCopySet"))
+                            {
+                                UserObject userObject = dictionaryProperty.get(object, keyValue).to<UserObject>();
+
+                                // The array elements are composed objects: deserialize them recursively
+                                deserialize<Proxy>(userObject, child, tag, include, throwExceptions);
+
+                                // Set the recursively deserialized user object
+                                dictionaryProperty.set(object, keyValue, userObject);
+                            }
+                            else
+                            {
+                                // The array elements are composed objects: deserialize them recursively
+                                deserialize<Proxy>(dictionaryProperty.get(object, keyValue).to<UserObject>(), value, tag, 
+                                    include, throwExceptions);
+
+                                // Re set the property if it has the DeserializeReSet tag
+                                if(property.hasTag("DeserializeReSet"))
+                                {
+                                    Value val = dictionaryProperty.get(object, keyValue);
+                                    dictionaryProperty.set(object, keyValue, val);
+                                }
+                            }
 	                    }
 	                    else
 	                    {
