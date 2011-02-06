@@ -41,10 +41,41 @@ namespace detail
  */
 
 /*
- * Generic version of CallHelper
+ * Generic version of CallHelper, delegates all calls to a specialization of CallHelperImpl.
+ */
+template <typename R, typename C, bool ReturnCopy = !boost::is_pod<R>::value && !boost::is_reference<R>::value && !boost::is_pointer<R>::value>
+struct CallHelper
+{
+    template <typename F>
+    static Value call(F func, C obj) {return CallHelperImpl<R, C, ReturnCopy>::call<F>(func, obj);}
+
+    template <typename F, typename A0>
+    static Value call(F func, C obj, A0 a0) {return CallHelperImpl<R, C, ReturnCopy>::call<F, A0>(func, obj, a0);}
+
+    template <typename F, typename A0, typename A1>
+    static Value call(F func, C obj, A0 a0, A1 a1) {return CallHelperImpl<R, C, ReturnCopy>::call<F, A0, A1>(func, obj, a0, a1);}
+
+    template <typename F, typename A0, typename A1, typename A2>
+    static Value call(F func, C obj, A0 a0, A1 a1, A2 a2) {return CallHelperImpl<R, C, ReturnCopy>::call<F, A0, A1, A2>(func, obj, a0, a1, a2);}
+
+    template <typename F, typename A0, typename A1, typename A2, typename A3>
+    static Value call(F func, C obj, A0 a0, A1 a1, A2 a2, A3 a3) {return CallHelperImpl<R, C, ReturnCopy>::call<F, A0, A1, A2, A3>(func, obj, a0, a1, a2, a3);}
+
+    template <typename F, typename A0, typename A1, typename A2, typename A3, typename A4>
+    static Value call(F func, C obj, A0 a0, A1 a1, A2 a2, A3 a3, A4 a4) {return CallHelperImpl<R, C, ReturnCopy>::call<F, A0, A1, A2, A3, A4>(func, obj, a0, a1, a2, a3, a4);}
+};
+
+/*
+ * Generic version of CallHelperImpl
+ */
+template <typename R, typename C, bool UserObjectCopy>
+struct CallHelperImpl {};
+
+/*
+ * Specialization of CallHelperImpl for copy POD or reference/pointer return values
  */
 template <typename R, typename C>
-struct CallHelper
+struct CallHelperImpl<R, C, false>
 {
     template <typename F>
     static Value call(F func, C obj) {return func(obj);}
@@ -63,6 +94,31 @@ struct CallHelper
 
     template <typename F, typename A0, typename A1, typename A2, typename A3, typename A4>
     static Value call(F func, C obj, A0 a0, A1 a1, A2 a2, A3 a3, A4 a4) {return func(obj, a0, a1, a2, a3, a4);}
+};
+
+/*
+ * Specialization of CallHelperImpl for copy return values
+ */
+template <typename R, typename C>
+struct CallHelperImpl<R, C, true>
+{
+    template <typename F>
+    static Value call(F func, C obj) {return UserObject::copy(func(obj));}
+
+    template <typename F, typename A0>
+    static Value call(F func, C obj, A0 a0) {return UserObject::copy(func(obj, a0));}
+
+    template <typename F, typename A0, typename A1>
+    static Value call(F func, C obj, A0 a0, A1 a1) {return UserObject::copy(func(obj, a0, a1));}
+
+    template <typename F, typename A0, typename A1, typename A2>
+    static Value call(F func, C obj, A0 a0, A1 a1, A2 a2) {return UserObject::copy(func(obj, a0, a1, a2));}
+
+    template <typename F, typename A0, typename A1, typename A2, typename A3>
+    static Value call(F func, C obj, A0 a0, A1 a1, A2 a2, A3 a3) {return UserObject::copy(func(obj, a0, a1, a2, a3));}
+
+    template <typename F, typename A0, typename A1, typename A2, typename A3, typename A4>
+    static Value call(F func, C obj, A0 a0, A1 a1, A2 a2, A3 a3, A4 a4) {return UserObject::copy(func(obj, a0, a1, a2, a3, a4));}
 };
 
 /*

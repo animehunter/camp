@@ -298,6 +298,7 @@ private:
     boost::shared_ptr<detail::AbstractObjectHolder> m_holder; ///< Optional abstract holder storing the object
     boost::scoped_ptr<ParentObject> m_parent; ///< Optional parent object
     const UserObject* m_child; ///< Optional pointer to the child object (m_parent.object.m_child == this)
+    bool m_copy; ///< If this user object is holding a copy instead of a reference. 
 };
 
 
