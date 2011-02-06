@@ -31,8 +31,9 @@ namespace camp
 namespace lua
 {
 
-ValueToLuaVisitor::ValueToLuaVisitor(lua_State* L)
+ValueToLuaVisitor::ValueToLuaVisitor(lua_State* L, bool constructed /*= false*/)
     : m_L(L)
+    , m_Constructed(constructed)
 {
 
 }
@@ -89,6 +90,78 @@ void ValueToLuaVisitor::operator()(const camp::UserObject& value)
         // Set the __newindex event to call the newIndexCallback function
         lua_pushstring(m_L, "__newindex");
         lua_pushcfunction(m_L, &newIndexCallback);
+        lua_rawset(m_L, -3);
+
+        if(metaclass.hasTag("EnableAddOperator"))
+        {
+            // Set the __add event to call the addCallback function
+            lua_pushstring(m_L, "__add");
+            lua_pushcfunction(m_L, &addCallback);
+            lua_rawset(m_L, -3);
+        }
+        if(metaclass.hasTag("EnableSubtractOperator"))
+        {
+            // Set the __sub event to call the subtractCallback function
+            lua_pushstring(m_L, "__sub");
+            lua_pushcfunction(m_L, &subtractCallback);
+            lua_rawset(m_L, -3);
+        }
+        if(metaclass.hasTag("EnableMultiplyOperator"))
+        {
+            // Set the __mul event to call the multiplyCallback function
+            lua_pushstring(m_L, "__mul");
+            lua_pushcfunction(m_L, &multiplyCallback);
+            lua_rawset(m_L, -3);
+        }
+        if(metaclass.hasTag("EnableDivideOperator"))
+        {
+            // Set the __div event to call the divideCallback function
+            lua_pushstring(m_L, "__div");
+            lua_pushcfunction(m_L, &divideCallback);
+            lua_rawset(m_L, -3);
+        }
+        if(metaclass.hasTag("EnableModulusOperator"))
+        {
+            // Set the __mod event to call the modulusCallback function
+            lua_pushstring(m_L, "__mod");
+            lua_pushcfunction(m_L, &modulusCallback);
+            lua_rawset(m_L, -3);
+        }
+        if(metaclass.hasTag("EnableEqualsOperator"))
+        {
+            // Set the __eq event to call the equalsCallback function
+            lua_pushstring(m_L, "__eq");
+            lua_pushcfunction(m_L, &equalsCallback);
+            lua_rawset(m_L, -3);
+        }
+        if(metaclass.hasTag("EnableLessOperator"))
+        {
+            // Set the __lt event to call the lessCallback function
+            lua_pushstring(m_L, "__lt");
+            lua_pushcfunction(m_L, &lessCallback);
+            lua_rawset(m_L, -3);
+        }
+        if(metaclass.hasTag("EnableLessEqualsOperator"))
+        {
+            // Set the __le event to call the lessEqualsCallback function
+            lua_pushstring(m_L, "__le");
+            lua_pushcfunction(m_L, &lessEqualsCallback);
+            lua_rawset(m_L, -3);
+        }
+        if(metaclass.hasTag("EnableUnaryMinusOperator"))
+        {
+            // Set the __unm event to call the unaryMinusCallback function
+            lua_pushstring(m_L, "__unm");
+            lua_pushcfunction(m_L, &unaryMinusCallback);
+            lua_rawset(m_L, -3);
+        }
+    }
+
+    if(m_Constructed)
+    {
+        // Set the __gc event to call the destructCallback function
+        lua_pushstring(m_L, "__gc");
+        lua_pushcfunction(m_L, &destructCallback);
         lua_rawset(m_L, -3);
     }
 

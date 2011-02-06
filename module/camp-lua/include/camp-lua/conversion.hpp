@@ -9,17 +9,16 @@
 ** it under the terms of the GNU Lesser General Public License as published by
 ** the Free Software Foundation, either version 3 of the License, or
 ** (at your option) any later version.
-** 
+**
 ** CAMP is distributed in the hope that it will be useful,
 ** but WITHOUT ANY WARRANTY; without even the implied warranty of
 ** MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 ** GNU Lesser General Public License for more details.
-** 
+**
 ** You should have received a copy of the GNU Lesser General Public License
 ** along with CAMP.  If not, see <http://www.gnu.org/licenses/>.
 **
 ****************************************************************************/
-
 
 #ifndef CAMP_LUA_CONVERSION_HPP
 #define CAMP_LUA_CONVERSION_HPP
@@ -31,20 +30,18 @@ struct lua_State;
 
 namespace camp
 {
-
 class Class;
 class Enum;
 
 namespace lua
 {
-
 /**
  * \brief Push onto the Lua stack \a L the metatable matching the given \a metaclass
  *
  * \param L The Lua stack receiving the metatable
  * \param metaclass Metaclass to be pushed on the stack
  */
-void classToLua(lua_State* L, const camp::Class& metaclass);
+void CAMP_API classToLua(lua_State* L, const camp::Class& metaclass);
 
 /**
  * \brief Push onto the Lua stack \a L the table containing the values from given \a metaenum
@@ -52,7 +49,7 @@ void classToLua(lua_State* L, const camp::Class& metaclass);
  * \param L The Lua stack receiving the table.
  * \param metaenum Metaenum to be pushed on the stack.
  */
-void enumToLua(lua_State* L, const camp::Enum& metaenum);
+void CAMP_API enumToLua(lua_State* L, const camp::Enum& metaenum);
 
 /**
  * \brief Return the value at \a index in the Lua stack \a L as a camp::Value
@@ -63,19 +60,17 @@ void enumToLua(lua_State* L, const camp::Enum& metaenum);
  * \param index Lua index (or pseudo-index) of the desired value in the stack
  * \return The value as camp::Value
  */
-camp::Value valueFromLua(lua_State* L, int index);
+camp::Value CAMP_API valueFromLua(lua_State* L, int index);
 
 /**
  * \brief Push onto the Lua stack \a L the given \a value
  *
  * \param L The Lua stack receiving the new value
  * \param value Value to be pushed on the stack
+ * \param constructed If the value was constructed in camp, set to true. Defaults to false
  */
-void valueToLua(lua_State* L, camp::Value value);
-
+void CAMP_API valueToLua(lua_State* L, camp::Value value, bool constructed = false);
 } // namespace lua
-
 } // namespace camp
 
 #endif // CAMP_LUA_CONVERSION_HPP
-

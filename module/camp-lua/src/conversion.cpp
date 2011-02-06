@@ -77,7 +77,7 @@ camp::Value valueFromLua(lua_State* L, int index)
     return v;
 }
 
-void valueToLua(lua_State* L, camp::Value value)
+void valueToLua(lua_State* L, camp::Value value, bool constructed /*= false*/)
 {
     ValueToLuaVisitor visitor(L);
     value.visit(visitor);

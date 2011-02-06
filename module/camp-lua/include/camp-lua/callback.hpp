@@ -1,3 +1,4 @@
+#include <string>
 /****************************************************************************
 **
 ** Copyright (C) 2009-2010 TECHNOGERMA Systems France and/or its subsidiary(-ies).
@@ -23,6 +24,8 @@
 
 #ifndef CAMP_LUA_CALLBACK_HPP
 #define CAMP_LUA_CALLBACK_HPP
+
+#include <string>
 
 struct lua_State;
 
@@ -64,6 +67,32 @@ int callCallback(lua_State* L);
  * \return Number of return value pushed on the stack
  */
 int constructCallback(lua_State* L);
+
+/**
+ * \brief Callback called before a camp::UserObject is garbage collected.
+ *
+ * \param L Lua stack holding the userdata
+ * \return Number of return value pushed on the stack
+ */
+int destructCallback(lua_State* L);
+
+/**
+ * \brief Callback called when an operator is called in Lua.
+ *
+ * \param L Lua stack holding the userdata
+ * \param rType The type of operator
+ * \return Number of return value pushed on the stack
+ */
+int operatorCallback(lua_State* L, const std::string& rType);
+inline int addCallback(lua_State* L) {return operatorCallback(L, "Add");}
+inline int subtractCallback(lua_State* L) {return operatorCallback(L, "Subtract");}
+inline int multiplyCallback(lua_State* L) {return operatorCallback(L, "Multiply");}
+inline int divideCallback(lua_State* L) {return operatorCallback(L, "Divide");}
+inline int modulusCallback(lua_State* L) {return operatorCallback(L, "Modulus");}
+inline int equalsCallback(lua_State* L) {return operatorCallback(L, "Equals");}
+inline int lessCallback(lua_State* L) {return operatorCallback(L, "Less");}
+inline int lessEqualsCallback(lua_State* L) {return operatorCallback(L, "LessEquals");}
+int unaryMinusCallback(lua_State* L);
 
 } // namespace lua
 

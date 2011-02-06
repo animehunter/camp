@@ -204,8 +204,113 @@ int constructCallback(lua_State* L)
         return luaL_error(L, "Fail to construct a new '%s'", metaclass->name().c_str());
 
     // Convert the new object to Lua
-    camp::lua::valueToLua(L, result);
+    camp::lua::valueToLua(L, result, true);
+
     return 1;
+}
+
+int destructCallback(lua_State* L)
+{
+    // Get userdata and destroy it
+    camp::UserObject* userdata = static_cast<camp::UserObject*>(lua_touserdata(L, 1));
+    userdata->getClass().destroy(*userdata);
+    return 1;
+}
+
+std::string toString(const camp::Value& value)
+{
+    switch(value.type())
+    {
+        case camp::boolType: return "Boolean";
+        case camp::intType: return "Integer";
+        case camp::realType: return "Real";
+        case camp::stringType: return "String";
+        case camp::userType: return value.to<camp::UserObject>().getClass().name();
+    }
+    return "";
+}
+
+int operatorCallback(lua_State* L, const std::string& rType)
+{
+    // Check args
+    int argc = lua_gettop(L);
+    if (argc != 2)
+        return luaL_error(L, "Invalid args count (got %d, expected at least the object instance and one other argument)", argc);
+    if (!lua_isuserdata(L, 1))
+        return luaL_error(L, "First arg must be a userdata (got %s)", lua_typename(L, lua_type(L, 1)));
+
+    // Get args
+    camp::UserObject* userdata = static_cast<camp::UserObject*>(lua_touserdata(L, 1));
+    camp::Args args; args += camp::lua::valueFromLua(L, 2);
+
+    try
+    {
+        // Retrieve the function to be called
+        const camp::Function& function = userdata->getClass().function(rType + toString(args[0]));
+
+        // Clear the stack
+        lua_settop(L, 0);
+
+        // Call the function.
+        camp::Value result = function.call(*userdata, args);
+
+        // Push the result if needed
+        if (result.type() == camp::noType)
+        {
+            return 0;
+        }
+        else
+        {
+            camp::lua::valueToLua(L, result);
+            return 1;
+        }
+    }
+    catch (const camp::Error& err)
+    {
+        return luaL_error(L, err.what());
+    }
+
+    return 0;
+}
+
+int unaryMinusCallback(lua_State* L)
+{
+    // Check args
+    int argc = lua_gettop(L);
+    if (argc != 1 || !lua_isuserdata(L, 1))
+        return luaL_error(L, "First arg must be a userdata (got %s)", lua_typename(L, lua_type(L, 1)));
+
+    // Get args
+    camp::UserObject* userdata = static_cast<camp::UserObject*>(lua_touserdata(L, 1));
+
+    try
+    {
+        // Retrieve the function to be called
+        const camp::Function& function = userdata->getClass().function("UnaryMinus");
+
+        // Clear the stack
+        lua_settop(L, 0);
+
+        // Call the function.
+        camp::Value result = function.call(*userdata);
+
+        // Push the result if needed
+        if (result.type() == camp::noType)
+        {
+            return 0;
+        }
+        else
+        {
+            camp::lua::valueToLua(L, result);
+            return 1;
+        }
+    }
+    catch (const camp::Error& err)
+    {
+        return luaL_error(L, err.what());
+    }
+
+    return 0;
 }
 
 } // namespace lua

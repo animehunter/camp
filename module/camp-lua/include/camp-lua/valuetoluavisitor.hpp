@@ -9,17 +9,16 @@
 ** it under the terms of the GNU Lesser General Public License as published by
 ** the Free Software Foundation, either version 3 of the License, or
 ** (at your option) any later version.
-** 
+**
 ** CAMP is distributed in the hope that it will be useful,
 ** but WITHOUT ANY WARRANTY; without even the implied warranty of
 ** MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 ** GNU Lesser General Public License for more details.
-** 
+**
 ** You should have received a copy of the GNU Lesser General Public License
 ** along with CAMP.  If not, see <http://www.gnu.org/licenses/>.
 **
 ****************************************************************************/
-
 
 #ifndef CAMP_LUA_VALUETOLUAVISITOR_HPP
 #define CAMP_LUA_VALUETOLUAVISITOR_HPP
@@ -35,20 +34,20 @@ namespace camp
 {
 namespace lua
 {
-
 /**
  * \brief ValueToLuaVisitor visit a camp::Value and push on a Lua stack a Lua value according to the
  * camp::Value type.
  */
-class ValueToLuaVisitor : public ValueVisitor<void>
+class CAMP_API ValueToLuaVisitor : public ValueVisitor<void>
 {
 public:
     /**
      * \brief Constructor
      *
      * \param L Lua stack which will receive the new value
+     * \param constructed If the value was constructed in camp, set to true. Defaults to false
      */
-    ValueToLuaVisitor(lua_State* L);
+    ValueToLuaVisitor(lua_State* L, bool constructed = false);
 
     /**
      * \brief No value is pushed when \a value as no type
@@ -105,11 +104,9 @@ public:
 
 private:
     lua_State* m_L; ///< Lua stack
+    bool m_Constructed;	///< If the value was constructed in camp
 };
-
 } // namespace lua
-
 } // namespace camp
 
 #endif // CAMP_LUA_VALUETOLUAVISITOR_HPP
-
