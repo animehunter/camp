@@ -340,12 +340,16 @@ ClassBuilder<T>& ClassBuilder<T>::addProperty(Property* property)
 {
     // Retrieve the class' properties indexed by name
     Class::PropertyNameIndex& properties = m_target->m_properties.get<Class::Name>();
+    Class::PropertyNameIndex& ownProperties = m_target->m_own_properties.get<Class::Name>();
 
     // First remove any property that already exists with the same name
     properties.erase(property->name());
+    ownProperties.erase(property->name());
 
     // Insert the new property
-    properties.insert(Class::PropertyPtr(property));
+    Class::PropertyPtr propertyPtr(property);
+    properties.insert(propertyPtr);
+    ownProperties.insert(propertyPtr);
 
     m_currentTagHolder = m_currentProperty = property;
     m_currentFunction = 0;
@@ -359,12 +363,16 @@ ClassBuilder<T>& ClassBuilder<T>::addFunction(Function* function)
 {
     // Retrieve the class' functions indexed by name
     Class::FunctionNameIndex& functions = m_target->m_functions.get<Class::Name>();
+    Class::FunctionNameIndex& ownFunctions = m_target->m_own_functions.get<Class::Name>();
 
     // First remove any function that already exists with the same name
     functions.erase(function->name());
+    ownFunctions.erase(function->name());
 
     // Insert the new function
-    functions.insert(Class::FunctionPtr(function));
+    Class::FunctionPtr functionPtr(function);
+    functions.insert(functionPtr);
+    ownFunctions.insert(functionPtr);
 
     m_currentTagHolder = m_currentFunction = function;
     m_currentProperty = 0;

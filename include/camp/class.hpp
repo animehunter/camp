@@ -158,78 +158,88 @@ public:
     /**
      * \brief Return the total number of functions of this metaclass
      *
+     * \param ownOnly If functions from base classes should be excluded. Defaults to false.
+     *
      * \return Number of functions
      */
-    std::size_t functionCount() const;
+    std::size_t functionCount(bool ownOnly = false) const;
 
     /**
      * \brief Check if this metaclass contains the given function
      *
      * \param name Name of the function to check
+     * \param ownOnly If functions from base classes should be excluded. Defaults to false.
      *
      * \return True if the function is in the metaclass, false otherwise
      */
-    bool hasFunction(const std::string& name) const;
+    bool hasFunction(const std::string& name, bool ownOnly = false) const;
 
     /**
      * \brief Get a function from its index in this metaclass
      *
      * \param index Index of the function to get
+     * \param ownOnly If functions from base classes should be excluded. Defaults to false.
      *
      * \return Reference to the function
      *
      * \throw OutOfRange index is out of range
      */
-    const Function& function(std::size_t index) const;
+    const Function& function(std::size_t index, bool ownOnly = false) const;
 
     /**
      * \brief Get a function from its name
      *
      * \param name Name of the function to get (case sensitive)
+     * \param ownOnly If functions from base classes should be excluded. Defaults to false.
      *
      * \return Reference to the function
      *
      * \throw FunctionNotFound \a name is not a function of the metaclass
      */
-    const Function& function(const std::string& name) const;
+    const Function& function(const std::string& name, bool ownOnly = false) const;
 
     /**
      * \brief Return the total number of properties of this metaclass
      *
+     * \param ownOnly If properties from base classes should be excluded. Defaults to false.
+     *
      * \return Number of properties
      */
-    std::size_t propertyCount() const;
+    std::size_t propertyCount(bool ownOnly = false) const;
 
     /**
      * \brief Check if this metaclass contains the given property
      *
      * \param name Name of the property to check
+     * \param ownOnly If properties from base classes should be excluded. Defaults to false.
      *
      * \return True if the property is in the metaclass, false otherwise
      */
-    bool hasProperty(const std::string& name) const;
+    bool hasProperty(const std::string& name, bool ownOnly = false) const;
 
     /**
      * \brief Get a property from its index in this metaclass
      *
      * \param index Index of the property to get
+     * \param ownOnly If properties from base classes should be excluded. Defaults to false.
      *
      * \return Reference to the property
      *
      * \throw OutOfRange index is out of range
      */
-    const Property& property(std::size_t index) const;
+    const Property& property(std::size_t index, bool ownOnly = false) const;
 
     /**
      * \brief Get a property from its name
      *
      * \param name Name of the property to get (case sensitive)
+     * \param ownOnly If properties from base classes should be excluded. Defaults to false.
      *
      * \return Reference to the property
      *
      * \throw PropertyNotFound \a name is not a property of the metaclass
      */
-    const Property& property(const std::string& name) const;
+    const Property& property(const std::string& name, bool ownOnly = false) const;
 
     /**
      * \brief Construct a new instance of the C++ class bound to the metaclass
@@ -355,7 +365,9 @@ private:
 
     std::string m_name; ///< Name of the metaclass
     FunctionTable m_functions; ///< Table of metafunctions indexed by name
+    FunctionTable m_own_functions; ///< Table of metafunctions (not from bases) indexed by name
     PropertyTable m_properties; ///< Table of metaproperties indexed by name
+    PropertyTable m_own_properties; ///< Table of metaproperties (not from bases) indexed by name
     BaseList m_bases; ///< List of base metaclasses
     ConstructorList m_constructors; ///< List of metaconstructors
     Destructor m_destructor; ///< Destructor (function that is able to delete an abstract object)
