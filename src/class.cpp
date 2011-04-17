@@ -52,33 +52,35 @@ const Class& Class::base(std::size_t index) const
 }
 
 //-------------------------------------------------------------------------------------------------
-std::size_t Class::functionCount() const
+std::size_t Class::functionCount(bool ownOnly /*= false*/) const
 {
-    return m_functions.size();
+    return (ownOnly?m_own_functions:m_functions).size();
 }
 
 //-------------------------------------------------------------------------------------------------
-bool Class::hasFunction(const std::string& name) const
+bool Class::hasFunction(const std::string& name, bool ownOnly /*= false*/) const
 {
-    const FunctionNameIndex& names = m_functions.get<Name>();
+    const FunctionNameIndex& names = (ownOnly?m_own_functions:m_functions).get<Name>();
 
     return names.find(name) != names.end();
 }
 
 //-------------------------------------------------------------------------------------------------
-const Function& Class::function(std::size_t index) const
+const Function& Class::function(std::size_t index, bool ownOnly /*= false*/) const
 {
-    // Make sure that the index is not out of range
-    if (index >= m_functions.size())
-        CAMP_ERROR(OutOfRange(index, m_functions.size()));
+    const FunctionTable& table = ownOnly?m_own_functions:m_functions;
 
-    return *m_functions[index];
+    // Make sure that the index is not out of range
+    if (index >= table.size())
+        CAMP_ERROR(OutOfRange(index, table.size()));
+
+    return *table[index];
 }
 
 //-------------------------------------------------------------------------------------------------
-const Function& Class::function(const std::string& name) const
+const Function& Class::function(const std::string& name, bool ownOnly /*= false*/) const
 {
-    const FunctionNameIndex& names = m_functions.get<Name>();
+    const FunctionNameIndex& names = (ownOnly?m_own_functions:m_functions).get<Name>();
 
     FunctionNameIndex::const_iterator it = names.find(name);
     if (it == names.end())
@@ -88,33 +90,35 @@ const Function& Class::function(const std::string& name) const
 }
 
 //-------------------------------------------------------------------------------------------------
-std::size_t Class::propertyCount() const
+std::size_t Class::propertyCount(bool ownOnly /*= false*/) const
 {
-    return m_properties.size();
+    return (ownOnly?m_own_properties:m_properties).size();
 }
 
 //-------------------------------------------------------------------------------------------------
-bool Class::hasProperty(const std::string& name) const
+bool Class::hasProperty(const std::string& name, bool ownOnly /*= false*/) const
 {
-    const PropertyNameIndex& names = m_properties.get<Name>();
+    const PropertyNameIndex& names = (ownOnly?m_own_properties:m_properties).get<Name>();
 
     return names.find(name) != names.end();
 }
 
 //-------------------------------------------------------------------------------------------------
-const Property& Class::property(std::size_t index) const
+const Property& Class::property(std::size_t index, bool ownOnly /*= false*/) const
 {
-    // Make sure that the index is not out of range
-    if (index >= m_properties.size())
-        CAMP_ERROR(OutOfRange(index, m_properties.size()));
+    const PropertyTable& table = ownOnly?m_own_properties:m_properties;
 
-    return *m_properties[index];
+    // Make sure that the index is not out of range
+    if (index >= table.size())
+        CAMP_ERROR(OutOfRange(index, table.size()));
+
+    return *table[index];
 }
 
 //-------------------------------------------------------------------------------------------------
-const Property& Class::property(const std::string& name) const
+const Property& Class::property(const std::string& name, bool ownOnly /*= false*/) const
 {
-    const PropertyNameIndex& names = m_properties.get<Name>();
+    const PropertyNameIndex& names = (ownOnly?m_own_properties:m_properties).get<Name>();
 
     PropertyNameIndex::const_iterator it = names.find(name);
     if (it == names.end())
