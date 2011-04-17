@@ -54,23 +54,23 @@ int indexCallback(lua_State* L)
 
     // Access to the property/function from the metaclass
     const camp::Class& metaclass = userdata->getClass();
+
     try
     {
-        // Try to retrieve a property with the requested name
-        const camp::Property& property = metaclass.property(key);
+        if(metaclass.hasProperty(key))
+        {
+            // Try to retrieve a property with the requested name
+            const camp::Property& property = metaclass.property(key);
 
-        // Call the property
-        camp::Value value = property.get(*userdata);
+            // Call the property
+            camp::Value value = property.get(*userdata);
 
-        // Publish to Lua
-        camp::lua::valueToLua(L, value);
+            // Publish to Lua
+            camp::lua::valueToLua(L, value);
 
-        return 1; // One value returned
-    }
-    catch (const camp::PropertyNotFound&)
-    {
-        // No property with the desired name
-        try
+            return 1; // One value returned
+        }
+        else if(metaclass.hasFunction(key))
         {
             // Try to retrieve a function
             const camp::Function& function = metaclass.function(key);
@@ -82,10 +82,8 @@ int indexCallback(lua_State* L)
 
             return 1; // One value returned (the C closure)
         }
-        catch (const camp::Error& err)
-        {
-            return luaL_error(L, err.what());
-        }
+        else
+            return luaL_error(L, "Property or function with name %s does not exist", key.c_str());
     }
     catch (const camp::Error& err)
     {
@@ -124,6 +122,10 @@ int newIndexCallback(lua_State* L)
         property.set(*userdata, newValue);
 
         return 0; // No value returned
+    }
+    catch (const camp::ForbiddenWrite& err)
+    {
+        err; // Ignore forbidden write errors
     }
     catch (const camp::Error& err)
     {
