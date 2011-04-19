@@ -70,6 +70,7 @@ namespace PropertyTest
             , p21(21)
             , p22(Two)
             , p24(MyType(24))
+            , p25(camp::Value(25))
         {
         }
 
@@ -114,6 +115,8 @@ namespace PropertyTest
         MyEnum p22; MyEnum* getP22() {return &p22;}
         std::string getP23(const std::string& str) const {return str + "23";}
         MyType p24; const MyType& getP24() const {return p24;} void setP24(MyType t) {p24 = t;}
+
+        camp::Value p25;
     };
 
     bool getP1(const MyClass& object) {return object.p1;}
@@ -176,6 +179,8 @@ namespace PropertyTest
             .property("p23", boost::bind(&MyClass::getP23, _1, "str")) // read-only getter + extra parameter
             .property("p24", boost::bind(&MyClass::getP24, _1),
                              boost::bind(&MyClass::setP24, _1, _2))    // read-only getter + write-only setter
+
+            .property("p25", &MyClass::p25)
             ;
     }
 }

@@ -35,14 +35,14 @@ struct PropertyFixture
     PropertyFixture()
     {
         const camp::Class& metaclass = camp::classByType<MyClass>();
-        for (int i = 1; i < 25; ++i)
+        for (int i = 1; i < 26; ++i)
         {
             if (i != 7 && i != 8 && i != 22) // remove when fixed
                 properties[i] = &metaclass.property("p" + boost::lexical_cast<std::string>(i));
         }
     }
 
-    const camp::Property* properties[25];
+    const camp::Property* properties[26];
 };
 
 //-----------------------------------------------------------------------------
@@ -77,6 +77,7 @@ BOOST_AUTO_TEST_CASE(type)
     //BOOST_CHECK_EQUAL(properties[22]->type(), camp::enumType);
     BOOST_CHECK_EQUAL(properties[23]->type(), camp::stringType);
     BOOST_CHECK_EQUAL(properties[24]->type(), camp::userType);
+    BOOST_CHECK_EQUAL(properties[25]->type(), camp::valueType);
 }
 
 //-----------------------------------------------------------------------------
@@ -106,6 +107,7 @@ BOOST_AUTO_TEST_CASE(name)
     //BOOST_CHECK_EQUAL(properties[22]->name(), "p22");
     BOOST_CHECK_EQUAL(properties[23]->name(), "p23");
     BOOST_CHECK_EQUAL(properties[24]->name(), "p24");
+    BOOST_CHECK_EQUAL(properties[25]->name(), "p25");
 }
 
 //-----------------------------------------------------------------------------
@@ -137,6 +139,7 @@ BOOST_AUTO_TEST_CASE(readable)
     //BOOST_CHECK_EQUAL(properties[22]->readable(object), true);
     BOOST_CHECK_EQUAL(properties[23]->readable(object), true);
     BOOST_CHECK_EQUAL(properties[24]->readable(object), true);
+    BOOST_CHECK_EQUAL(properties[25]->readable(object), true);
 }
 
 //-----------------------------------------------------------------------------
@@ -168,6 +171,7 @@ BOOST_AUTO_TEST_CASE(writable)
     //BOOST_CHECK_EQUAL(properties[22]->writable(object), true);
     BOOST_CHECK_EQUAL(properties[23]->writable(object), false);
     BOOST_CHECK_EQUAL(properties[24]->writable(object), true);
+    BOOST_CHECK_EQUAL(properties[25]->writable(object), true);
 }
 
 //-----------------------------------------------------------------------------
@@ -199,6 +203,7 @@ BOOST_AUTO_TEST_CASE(get)
     //BOOST_CHECK_EQUAL(properties[22]->get(object), camp::Value(object.p22));
     BOOST_CHECK_EQUAL(properties[23]->get(object), camp::Value(object.getP23("str")));
     BOOST_CHECK_EQUAL(properties[24]->get(object), camp::Value(object.p24));
+    BOOST_CHECK_EQUAL(properties[25]->get(object), object.p25);
 }
 
 //-----------------------------------------------------------------------------
@@ -231,6 +236,7 @@ BOOST_AUTO_TEST_CASE(set)
     properties[21]->set(object, -21);
     //properties[22]->set(object, One);
     properties[24]->set(object, MyType(-24));
+    properties[25]->set(object, -25);
 
     BOOST_CHECK_EQUAL(object.p3,        "-3");
     BOOST_CHECK_EQUAL(object.p4,        MyType(-4));
@@ -246,6 +252,7 @@ BOOST_AUTO_TEST_CASE(set)
     BOOST_CHECK_EQUAL(object.p21,       -21);
     //BOOST_CHECK_EQUAL(object.p22,       One);
     BOOST_CHECK_EQUAL(object.p24,       MyType(-24));
+    BOOST_CHECK_EQUAL(object.p25,       -25);
 }
 
 BOOST_AUTO_TEST_SUITE_END()
