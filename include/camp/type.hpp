@@ -55,6 +55,7 @@ enum Type
     enumType,       ///< Enumerated types
     arrayType,      ///< Array types (std::vector, std::list, T[])
     dictionaryType, ///< Dictionary types (std::map, std::set)
+    valueType,	    ///< Type erased value type (camp::Value) 
     userType        ///< User-defined classes
 };
 

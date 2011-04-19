@@ -52,6 +52,7 @@ std::string BadType::typeName(Type type)
         case enumType:          return "enum";
         case arrayType:         return "array";
         case dictionaryType:    return "dictionary";
+        case valueType:         return "value";
         case userType:          return "user";
         default:                return "unknown";
     }

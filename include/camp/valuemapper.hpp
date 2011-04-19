@@ -30,6 +30,7 @@
 #include <camp/userobject.hpp>
 #include <camp/arraymapper.hpp>
 #include <camp/errors.hpp>
+#include <camp/value.hpp>
 #include <boost/lexical_cast.hpp>
 #include <boost/type_traits.hpp>
 #include <boost/utility/enable_if.hpp>

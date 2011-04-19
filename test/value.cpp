@@ -211,7 +211,8 @@ BOOST_AUTO_TEST_CASE(stringConversionsOk)
     BOOST_CHECK_EQUAL(stringValue.to<short>(),          1);
     BOOST_CHECK_EQUAL(stringValue.to<int>(),            1);
     BOOST_CHECK_EQUAL(stringValue.to<long>(),           1);
-    BOOST_CHECK_EQUAL(stringValue.to<unsigned char>(),  '1');
+    //BOOST_CHECK_EQUAL(stringValue.to<unsigned char>(),  '1'); // Behaviour changed to casting to a number.
+    BOOST_CHECK_EQUAL(stringValue.to<unsigned char>(),  1);
     BOOST_CHECK_EQUAL(stringValue.to<unsigned short>(), 1);
     BOOST_CHECK_EQUAL(stringValue.to<unsigned int>(),   1);
     BOOST_CHECK_EQUAL(stringValue.to<unsigned long>(),  1);

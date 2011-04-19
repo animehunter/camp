@@ -225,4 +225,26 @@ CAMP_API std::ostream& operator<<(std::ostream& stream, const Value& value);
 #include <camp/value.inl>
 
 
+namespace camp_ext
+{
+/*
+ * Specialization of ValueMapper for Value
+ */
+template <>
+struct ValueMapper<camp::Value>
+{
+    static const int type = camp::valueType;
+
+    static const camp::Value to(const camp::Value& source)  {return camp::Value(source);}
+
+    static camp::Value from(bool source)                    {return camp::Value(source);}
+    static camp::Value from(long source)                    {return camp::Value(source);}
+    static camp::Value from(double source)                  {return camp::Value(source);}
+    static camp::Value from(const std::string& source)      {return camp::Value(source);}
+    static camp::Value from(const camp::UserObject& source) {return camp::Value(source);}
+    static camp::Value from(const camp::EnumObject& source) {return camp::Value(source);}
+};
+} // namespace camp_ext
+
+
 #endif // CAMP_VALUE_HPP
