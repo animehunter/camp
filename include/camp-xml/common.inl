@@ -98,16 +98,21 @@ void serialize(const UserObject& object, typename Proxy::NodeType node, const Va
                         typename Proxy::NodeType key = Proxy::addChild(item, "key");
                         if (Proxy::isValid(key))
                         {
-                            if (dictionaryProperty.keyType() == userType)
+                            switch(dictionaryProperty.keyType())
                             {
                                 // The dictionary keys are composed objects: serialize them recursively
-                                serialize<Proxy>(j->key().to<UserObject>(), key, tag, include, 
-                                    throwExceptions);
-                            }
-                            else
-                            {
+                                case userType:
+                                    serialize<Proxy>(j->key().to<UserObject>(), key, tag, include, 
+                                        throwExceptions);
+                                    break;
+                                // The dictionary keys are type erased values: serialize them and add type info
+                                case valueType:
+                                    serializeErasureValue<Proxy>(j->key(), key, tag, include, throwExceptions);
+                                    break;
                                 // The dictionary keys are simple properties: write them as the text of their XML node
-                                Proxy::setText(key, j->key());
+                                default:
+                                    Proxy::setText(key, j->key());
+                                    break;
                             }
                         }
 
@@ -115,16 +120,21 @@ void serialize(const UserObject& object, typename Proxy::NodeType node, const Va
                         typename Proxy::NodeType value = Proxy::addChild(item, "value");
                         if (Proxy::isValid(value))
                         {
-                            if (dictionaryProperty.elementType() == userType)
+                            switch(dictionaryProperty.elementType())
                             {
                                 // The dictionary elements are composed objects: serialize them recursively
-                                serialize<Proxy>(j->value().to<UserObject>(), value, tag, include, 
-                                    throwExceptions);
-                            }
-                            else
-                            {
+                                case userType:
+                                    serialize<Proxy>(j->value().to<UserObject>(), value, tag, include, 
+                                        throwExceptions);
+                                    break;
+                                // The dictionary elements are type erased values: serialize them and add type info
+                                case valueType:
+                                    serializeErasureValue<Proxy>(j->value(), value, tag, include, throwExceptions);
+                                    break;
                                 // The dictionary elements are simple properties: write them as the text of their XML node
+                                default:
                                 Proxy::setText(value, j->value());
+                                    break;
                             }
                         }
                     }
@@ -141,6 +151,62 @@ void serialize(const UserObject& object, typename Proxy::NodeType node, const Va
         catch(camp::Error e)
         {
         	if (throwExceptions) throw e;
+        }
+    }
+}
+
+template <typename Proxy>
+void serializeErasureValue(const Value& value, typename Proxy::NodeType node, const Value& tag, 
+    bool include, bool throwExceptions)
+{
+    switch(value.type())
+    {
+        case boolType:
+        {
+            typename Proxy::NodeType type = Proxy::addChild(node, "bool");
+            if (Proxy::isValid(type)) Proxy::setText(type, value);
+            break;
+        }
+        case intType:
+        {
+            typename Proxy::NodeType type = Proxy::addChild(node, "int");
+            if (Proxy::isValid(type)) Proxy::setText(type, value);
+            break;
+        }
+        case realType:
+        {
+            typename Proxy::NodeType type = Proxy::addChild(node, "real");
+            if (Proxy::isValid(type)) Proxy::setText(type, value);
+            break;
+        }
+        case stringType:
+        {
+            typename Proxy::NodeType type = Proxy::addChild(node, "string");
+            if (Proxy::isValid(type)) Proxy::setText(type, value);
+            break;
+        }
+        case enumType:
+        {
+            typename Proxy::NodeType type = Proxy::addChild(node, "enum");
+            if (Proxy::isValid(type)) 
+            {
+                //const Enum& metaenum = value.to<EnumObject>().getEnum();
+                //typename Proxy::NodeType name = Proxy::addChild(type, metaenum.name());
+                /*if (Proxy::isValid(name))*/ Proxy::setText(type, value);
+            }
+            break;
+        }
+        case userType:
+        {
+            const UserObject& object = value.to<UserObject>();
+            typename Proxy::NodeType type = Proxy::addChild(node, "object");
+            if (Proxy::isValid(type)) 
+            {
+                typename Proxy::NodeType name = Proxy::addChild(type, object.getClass().name());
+                if (Proxy::isValid(name)) serialize<Proxy>(object, name, tag, include, 
+                    throwExceptions);
+            }
+            break;
         }
     }
 }
