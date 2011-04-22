@@ -310,11 +310,11 @@ struct ValueMapper<camp::EnumObject>
     static const camp::EnumObject& to(const camp::EnumObject& source) {return source;}
     static const camp::EnumObject& from(const camp::EnumObject& source) {return source;}
 
-    static camp::UserObject from(bool)                    {CAMP_ERROR(camp::BadType(camp::boolType,   camp::enumType));}
-    static camp::UserObject from(long)                    {CAMP_ERROR(camp::BadType(camp::intType,    camp::enumType));}
-    static camp::UserObject from(double)                  {CAMP_ERROR(camp::BadType(camp::realType,   camp::enumType));}
-    static camp::UserObject from(const std::string&)      {CAMP_ERROR(camp::BadType(camp::stringType, camp::enumType));}
-    static camp::UserObject from(const camp::UserObject&) {CAMP_ERROR(camp::BadType(camp::enumType,   camp::enumType));}
+    static camp::EnumObject from(bool)                    {CAMP_ERROR(camp::BadType(camp::boolType,   camp::enumType));}
+    static camp::EnumObject from(long)                    {CAMP_ERROR(camp::BadType(camp::intType,    camp::enumType));}
+    static camp::EnumObject from(double)                  {CAMP_ERROR(camp::BadType(camp::realType,   camp::enumType));}
+    static camp::EnumObject from(const std::string&)      {CAMP_ERROR(camp::BadType(camp::stringType, camp::enumType));}
+    static camp::EnumObject from(const camp::UserObject&) {CAMP_ERROR(camp::BadType(camp::userType,   camp::enumType));}
 };
 
 /*
