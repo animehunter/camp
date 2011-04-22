@@ -56,6 +56,14 @@ public:
     EnumObject(T value, typename boost::enable_if<boost::is_enum<T> >::type* = 0);
 
     /**
+     * \brief Construct the enum object from an enumerated value
+     *
+     * \param value Value to store in the enum object
+     * \param metaenum The meta enum type
+     */
+    EnumObject(long value, const Enum& metaenum);
+
+    /**
      * \brief Get the value of the enum object
      *
      * \return Integer value of the enum object

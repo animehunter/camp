@@ -56,9 +56,19 @@ struct RapidXml
         return node->first_node(name.c_str());
     }
 
+    static NodeType findFirstChild(NodeType node)
+    {
+        return node->first_node();
+    }
+
     static NodeType findNextSibling(NodeType node, const std::string& name)
     {
         return node->next_sibling(name.c_str());
+    }
+
+    static std::string getName(NodeType node)
+    {
+        return node->name();
     }
 
     static std::string getText(NodeType node)

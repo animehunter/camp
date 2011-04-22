@@ -80,6 +80,15 @@ BOOST_AUTO_TEST_CASE(getEnum)
 }
 
 //-----------------------------------------------------------------------------
+BOOST_AUTO_TEST_CASE(create)
+{
+    camp::EnumObject zero(Zero);
+    camp::EnumObject zero2(Zero, camp::enumByName("EnumObjectTest::MyEnum"));
+
+    BOOST_CHECK_EQUAL(zero == zero2, true);
+}
+
+//-----------------------------------------------------------------------------
 BOOST_AUTO_TEST_CASE(equal)
 {
     // Setup

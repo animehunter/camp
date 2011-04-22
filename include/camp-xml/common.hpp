@@ -24,6 +24,7 @@
 #define CAMP_XML_COMMON_HPP
 
 #include <camp/userobject.hpp>
+#include <camp/valuemapper.hpp>
 #include <camp/value.hpp>
 #include <camp/arrayproperty.hpp>
 #include <string>
