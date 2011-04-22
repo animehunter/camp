@@ -423,7 +423,7 @@ inline Value deserializeErasureValue(typename Proxy::NodeType node, const Value&
             if (Proxy::isValid(enumnode)) 
             {
                 const Enum& metaenum = enumByName(Proxy::getName(enumnode));
-                return EnumObject(ValueMapper<long>::from(Proxy::getText(enumnode)), metaenum);
+                return EnumObject(metaenum.value(Proxy::getText(enumnode)), metaenum);
             }
         }
         else if (name == "object")
