@@ -28,6 +28,14 @@
 namespace camp
 {
 //-------------------------------------------------------------------------------------------------
+EnumObject::EnumObject(long value, const Enum& metaenum)
+    : m_value(value)
+    , m_enum(&metaenum)
+{
+
+}
+
+//-------------------------------------------------------------------------------------------------
 long EnumObject::value() const
 {
     return m_value;
