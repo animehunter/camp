@@ -97,12 +97,18 @@ void ArrayProperty::set(const UserObject& object, std::size_t index, const Value
 {
     // Check if the property is writable
     if (!writable(object))
+    {
+        m_setted_nonwritable_signal(object, *this, index, value);
         CAMP_ERROR(ForbiddenWrite(name()));
+    }
 
     // Check if the index is in range
     std::size_t range = size(object);
     if (index >= range)
         CAMP_ERROR(OutOfRange(index, range));
+
+    // Signal before setting the value so slots can throw an exception to prevent setting.
+    m_setted_signal(object, *this, index, value);
 
     return setElement(object, index, value);
 }
@@ -141,12 +147,18 @@ void ArrayProperty::remove(const UserObject& object, std::size_t index) const
 
     // Check if the property is writable
     if (!writable(object))
+    {
+        m_removed_nonwritable_signal(object, *this, index);
         CAMP_ERROR(ForbiddenWrite(name()));
+    }
 
     // Check if the index is in range
     std::size_t range = size(object);
     if (index >= range)
         CAMP_ERROR(OutOfRange(index, range));
+
+    // Signal before removing the value so slots can throw an exception to prevent removal.
+    m_removed_signal(object, *this, index);
 
     return removeElement(object, index);
 }
@@ -167,6 +179,30 @@ boost::signals2::connection ArrayProperty::connectInserted(const OnInsert::slot_
 boost::signals2::connection ArrayProperty::connectInsertedNonwritable(const OnInsert::slot_type& slot) const
 {
     return m_inserted_nonwritable_signal.connect(slot);
+}
+
+//-------------------------------------------------------------------------------------------------
+boost::signals2::connection ArrayProperty::connectSetted( const OnSet::slot_type& slot ) const
+{
+    return m_setted_signal.connect(slot);
+}
+
+//-------------------------------------------------------------------------------------------------
+boost::signals2::connection ArrayProperty::connectSettedNonwritable( const OnSet::slot_type& slot ) const
+{
+    return m_setted_nonwritable_signal.connect(slot);
+}
+
+//-------------------------------------------------------------------------------------------------
+boost::signals2::connection ArrayProperty::connectRemoved( const OnRemove::slot_type& slot ) const
+{
+    return m_removed_signal.connect(slot);
+}
+
+//-------------------------------------------------------------------------------------------------
+boost::signals2::connection ArrayProperty::connectRemovedNonwritable( const OnRemove::slot_type& slot ) const
+{
+    return m_removed_nonwritable_signal.connect(slot);
 }
 
 //-------------------------------------------------------------------------------------------------

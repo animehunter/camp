@@ -367,7 +367,20 @@ void deserialize(const UserObject& object, typename Proxy::NodeType node, const 
                         else if (dictionaryProperty.elementType() == valueType)
                         {
                             Value val = deserializeErasureValue<Proxy>(value, tag, include, throwExceptions);
-                            dictionaryProperty.set(object, keyValue, val);
+
+                            // Add key to dictionary before deserializing the value
+                            if(property.hasTag("SetFunction"))
+                            {
+                                metaclass.function(property.tag("SetFunction").to<std::string>()).call(object, Args(keyValue, val));
+                            }
+                            else if(property.hasTag("AddFunction") && dictionaryProperty.exists(object, keyValue))
+                            {
+                                metaclass.function(property.tag("AddFunction").to<std::string>()).call(object, keyValue);
+                            }
+                            else
+                            {
+                                dictionaryProperty.set(object, keyValue, val);
+                            }
                         }
 	                    else
 	                    {
