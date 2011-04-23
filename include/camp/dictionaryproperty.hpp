@@ -39,6 +39,9 @@ class CAMP_API DictionaryProperty : public Property
 {
 public:
 
+    typedef boost::signals2::signal<void (const UserObject&, const DictionaryProperty&, const Value&, const Value&)> OnSet;
+    typedef boost::signals2::signal<void (const UserObject&, const DictionaryProperty&, const Value&)> OnRemove;
+
     /**
      * \brief Construct the property from its description
      *
@@ -168,6 +171,44 @@ public:
      */
     virtual void accept(ClassVisitor& visitor) const;
 
+    /**
+     * \brief Connects a slot to the value setted signal.
+     * 
+     * \param slot The slot to connect to the signal.
+     *
+     * \return Connection object to block or disconnect the signal-slot connection.
+     */
+    boost::signals2::connection connectSetted(const OnSet::slot_type& slot) const;
+
+    /**
+     * \brief Connects a slot to the non-writable value setted signal. This is only called when
+     * a value is set while the object is not writable.
+     * 
+     * \param slot The slot to connect to the signal.
+     *
+     * \return Connection object to block or disconnect the signal-slot connection.
+     */
+    boost::signals2::connection connectSettedNonwritable(const OnSet::slot_type& slot) const;
+
+    /**
+     * \brief Connects a slot to the value removed signal.
+     * 
+     * \param slot The slot to connect to the signal.
+     *
+     * \return Connection object to block or disconnect the signal-slot connection.
+     */
+    boost::signals2::connection connectRemoved(const OnRemove::slot_type& slot) const;
+
+    /**
+     * \brief Connects a slot to the non-writable value removed signal. This is only called when
+     * a value is set while the object is not writable.
+     * 
+     * \param slot The slot to connect to the signal.
+     *
+     * \return Connection object to block or disconnect the signal-slot connection.
+     */
+    boost::signals2::connection connectRemovedNonwritable(const OnRemove::slot_type& slot) const;
+
 protected:
 
     /**
@@ -261,6 +302,10 @@ private:
 
     Type m_keyType; ///< Type of the keys of the dictionary
     Type m_elementType; ///< Type of the elements of the dictionary
+    mutable OnSet m_setted_signal; ///< Setted signal
+    mutable OnSet m_setted_nonwritable_signal; ///< Non-writable setted signal
+    mutable OnRemove m_removed_signal; ///< Removed signal
+    mutable OnRemove m_removed_nonwritable_signal; ///< Non-writable removed signal
 };
 
 } // namespace camp

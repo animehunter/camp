@@ -110,7 +110,13 @@ void DictionaryProperty::set(const UserObject& object, const camp::Value& key, c
 {
     // Check if the property is writable
     if (!writable(object))
+    {
+        m_setted_nonwritable_signal(object, *this, key, value);
         CAMP_ERROR(ForbiddenWrite(name()));
+    }
+
+    // Signal before setting the value so slots can throw an exception to prevent setting.
+    m_setted_signal(object, *this, key, value);
 
     return setElement(object, key, value);
 }
@@ -120,7 +126,13 @@ void DictionaryProperty::remove(const UserObject& object, const camp::Value& key
 {
     // Check if element exists
     if(!exists(object, key))
+    {
+        m_removed_nonwritable_signal(object, *this, key);
         CAMP_ERROR(ElementNotFound());
+    }
+
+    // Signal before removing the value so slots can throw an exception to prevent removal.
+    m_removed_signal(object, *this, key);
 
     return removeElement(object, key);
 }
@@ -129,6 +141,30 @@ void DictionaryProperty::remove(const UserObject& object, const camp::Value& key
 void DictionaryProperty::accept(ClassVisitor& visitor) const
 {
     visitor.visit(*this);
+}
+
+//-------------------------------------------------------------------------------------------------
+boost::signals2::connection DictionaryProperty::connectSetted( const OnSet::slot_type& slot ) const
+{
+    return m_setted_signal.connect(slot);
+}
+
+//-------------------------------------------------------------------------------------------------
+boost::signals2::connection DictionaryProperty::connectSettedNonwritable( const OnSet::slot_type& slot ) const
+{
+    return m_setted_nonwritable_signal.connect(slot);
+}
+
+//-------------------------------------------------------------------------------------------------
+boost::signals2::connection DictionaryProperty::connectRemoved( const OnRemove::slot_type& slot ) const
+{
+    return m_removed_signal.connect(slot);
+}
+
+//-------------------------------------------------------------------------------------------------
+boost::signals2::connection DictionaryProperty::connectRemovedNonwritable( const OnRemove::slot_type& slot ) const
+{
+    return m_removed_nonwritable_signal.connect(slot);
 }
 
 //-------------------------------------------------------------------------------------------------
