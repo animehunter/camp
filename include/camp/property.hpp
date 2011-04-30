@@ -52,7 +52,7 @@ class CAMP_API Property : public TagHolder
 {
 public:
 
-    typedef boost::signals2::signal<void (const UserObject&, const Property&, const Value&)> OnSet;
+    typedef boost::signals2::signal<void (const UserObject&, const Property&, const Value&, const int)> OnSet;
 
     /**
      * \brief Destructor
@@ -112,12 +112,13 @@ public:
      *
      * \param object Object
      * \param value New value to assign to the property
+     * \param reason Optional reason number that gets sent to the change signal
      *
      * \throw NullObject \a object is invalid
      * \throw ForbiddenWrite property is not writable
      * \throw BadType \a value can't be converted to the property's type
      */
-    void set(const UserObject& object, const Value& value) const;
+    void set(const UserObject& object, const Value& value, const int reason = 0) const;
 
     /**
      * \brief Accept the visitation of a ClassVisitor

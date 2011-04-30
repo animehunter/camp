@@ -69,17 +69,17 @@ Value Property::get(const UserObject& object) const
 }
 
 //-------------------------------------------------------------------------------------------------
-void Property::set(const UserObject& object, const Value& value) const
+void Property::set(const UserObject& object, const Value& value, const int reason /*= 0*/) const
 {
     // Check if the property is writable
     if (!writable(object))
     {
-        m_setted_nonwritable_signal(object, *this, value);
+        m_setted_nonwritable_signal(object, *this, value, reason);
         CAMP_ERROR(ForbiddenWrite(name()));
     }
 
     // Signal before setting the property so slots can throw an exception to prevent setting.
-    m_setted_signal(object, *this, value);
+    m_setted_signal(object, *this, value, reason);
 
     // Here we don't call setValue directly, we rather let the user object do it
     // and add any processing needed for proper propagation of the modification
