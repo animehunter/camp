@@ -119,7 +119,7 @@ int newIndexCallback(lua_State* L)
         const camp::Property& property = metaclass.property(key);
 
         // Call the property
-        property.set(*userdata, newValue);
+        property.set(*userdata, newValue, 1);
 
         return 0; // No value returned
     }
