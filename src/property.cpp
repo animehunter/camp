@@ -53,6 +53,12 @@ bool Property::readable(const UserObject& object) const
 }
 
 //-------------------------------------------------------------------------------------------------
+bool Property::writable() const
+{
+    return isWritable();
+}
+
+//-------------------------------------------------------------------------------------------------
 bool Property::writable(const UserObject& object) const
 {
     return isWritable() && m_writable.get(object);
