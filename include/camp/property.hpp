@@ -85,6 +85,13 @@ public:
     bool readable(const UserObject& object) const;
 
     /**
+     * \brief Check if the property is writable, ie if a setter exists for this property
+     *
+     * \return True if the property can be written, false otherwise
+     */
+    bool writable() const;
+
+    /**
      * \brief Check if the property is currently writable for a given object
      *
      * \param object Object
