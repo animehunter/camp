@@ -147,6 +147,8 @@ public:
      */
     template <typename F1, typename F2>
     ClassBuilder<T>& property(const std::string& name, F1 accessor1, F2 accessor2);
+    template <typename S, typename F1, typename F2>
+    ClassBuilder<T>& property(const std::string& name, F1 accessor1, F2 accessor2);
 
     /**
      * \brief Declare a new property from three accessors
