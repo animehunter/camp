@@ -105,6 +105,18 @@ ClassBuilder<T>& ClassBuilder<T>::property(const std::string& name, F1 accessor1
 
 //-------------------------------------------------------------------------------------------------
 template <typename T>
+template <typename S, typename F1, typename F2>
+ClassBuilder<T>& ClassBuilder<T>::property(const std::string& name, F1 accessor1, F2 accessor2)
+{
+    // Find the factory which will be able to construct a camp::Property from accessors of type F1 and F2
+    typedef detail::PropertyFactory2Special<T, F1, F2, S> Factory;
+
+    // Construct and add the metaproperty
+    return addProperty(Factory::get(name, accessor1, accessor2));
+}
+
+//-------------------------------------------------------------------------------------------------
+template <typename T>
 template <typename F1, typename F2, typename F3>
 ClassBuilder<T>& ClassBuilder<T>::property(const std::string& name, F1 accessor1, F2 accessor2, F3 accessor3)
 {

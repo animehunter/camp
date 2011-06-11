@@ -36,6 +36,8 @@
 #include <boost/utility/enable_if.hpp>
 #include <boost/type_traits/remove_reference.hpp>
 #include <boost/type_traits/is_void.hpp>
+#include <boost/function_types/parameter_types.hpp>
+#include <boost/mpl/at.hpp>
 
 
 namespace camp
@@ -233,7 +235,7 @@ private:
 /*
  * Property accessor composed of 1 getter and 1 setter
  */
-template <typename C, typename R>
+template <typename C, typename R, typename S = typename boost::remove_reference<R>::type>
 class Accessor2
 {
 public:
@@ -241,7 +243,7 @@ public:
     typedef ObjectTraits<R> Traits;
     typedef typename Traits::DataType DataType;
     typedef C ClassType;
-    typedef typename boost::remove_reference<R>::type ArgumentType;
+    typedef S ArgumentType;
 
     enum
     {
@@ -387,6 +389,26 @@ struct PropertyFactory2
     static Property* get(const std::string& name, F1 accessor1, F2 accessor2)
     {
         typedef Accessor2<C, ReturnType> AccessorType;
+
+        typedef camp_ext::ValueMapper<typename AccessorType::DataType> ValueMapper;
+        typedef typename PropertyMapper<AccessorType, ValueMapper::type>::Type PropertyType;
+
+        return new PropertyType(name, AccessorType(accessor1, accessor2));
+    }
+};
+
+/*
+ * Property factory which instanciates the proper type of property from 2 accessors and custom 
+ * setter type.
+ */
+template <typename C, typename F1, typename F2, typename S, typename E = void>
+struct PropertyFactory2Special
+{
+    typedef typename FunctionTraits<F1>::ReturnType ReturnType;
+
+    static Property* get(const std::string& name, F1 accessor1, F2 accessor2)
+    {
+        typedef Accessor2<C, ReturnType, S> AccessorType;
 
         typedef camp_ext::ValueMapper<typename AccessorType::DataType> ValueMapper;
         typedef typename PropertyMapper<AccessorType, ValueMapper::type>::Type PropertyType;
