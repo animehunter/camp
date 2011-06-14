@@ -30,6 +30,7 @@
 #include <camp/args.hpp>
 #include <camp/tagholder.hpp>
 #include <camp/type.hpp>
+#include <camp/typeinfo.hpp>
 #include <camp/value.hpp>
 #include <string>
 #include <vector>
@@ -76,6 +77,13 @@ public:
      * \return Type of the result of the function
      */
     Type returnType() const;
+
+    /**
+     * \brief Get the type info of variable returned by the function
+     *
+     * \return Type info of the result of the function
+     */
+    virtual CampType returnCampType() const = 0;
 
     /**
      * \brief Get the type of an argument given by its index

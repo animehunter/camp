@@ -147,6 +147,31 @@ struct CallHelperImpl<std::string, C, true>
 };
 
 /*
+ * Specialization of CallHelperImpl for copy return values
+ */
+template <typename C>
+struct CallHelperImpl<camp::Value, C, true>
+{
+    template <typename F>
+    static Value call(F func, C obj) {return func(obj);}
+
+    template <typename F, typename A0>
+    static Value call(F func, C obj, A0 a0) {return func(obj, a0);}
+
+    template <typename F, typename A0, typename A1>
+    static Value call(F func, C obj, A0 a0, A1 a1) {return func(obj, a0, a1);}
+
+    template <typename F, typename A0, typename A1, typename A2>
+    static Value call(F func, C obj, A0 a0, A1 a1, A2 a2) {return func(obj, a0, a1, a2);}
+
+    template <typename F, typename A0, typename A1, typename A2, typename A3>
+    static Value call(F func, C obj, A0 a0, A1 a1, A2 a2, A3 a3) {return func(obj, a0, a1, a2, a3);}
+
+    template <typename F, typename A0, typename A1, typename A2, typename A3, typename A4>
+    static Value call(F func, C obj, A0 a0, A1 a1, A2 a2, A3 a3, A4 a4) {return func(obj, a0, a1, a2, a3, a4);}
+};
+
+/*
  * Specialization of CallHelper for functions returning void
  */
 template <typename C>

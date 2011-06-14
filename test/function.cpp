@@ -54,12 +54,16 @@ BOOST_FIXTURE_TEST_SUITE(FUNCTION, FunctionFixture)
 BOOST_AUTO_TEST_CASE(returnType)
 {
     BOOST_CHECK_EQUAL(functions[1]->returnType(),  camp::noType);
+    BOOST_CHECK_EQUAL(boost::get<camp::Type>(functions[1]->returnCampType()), camp::noType);
     BOOST_CHECK_EQUAL(functions[2]->returnType(),  camp::intType);
+    BOOST_CHECK_EQUAL(boost::get<camp::Type>(functions[2]->returnCampType()), camp::intType);
     BOOST_CHECK_EQUAL(functions[3]->returnType(),  camp::stringType);
     BOOST_CHECK_EQUAL(functions[4]->returnType(),  camp::userType);
+    BOOST_CHECK(boost::get<const camp::Class&>(functions[4]->returnCampType()) == camp::classByType<MyType>());
     BOOST_CHECK_EQUAL(functions[5]->returnType(),  camp::userType);
+    BOOST_CHECK(boost::get<const camp::Class&>(functions[5]->returnCampType()) == camp::classByType<MyType>());
     BOOST_CHECK_EQUAL(functions[6]->returnType(),  camp::noType);
-    BOOST_CHECK_EQUAL(functions[7]->returnType(),  camp::userType);
+    BOOST_CHECK_EQUAL(functions[7]->returnType(),  camp::valueType);
     BOOST_CHECK_EQUAL(functions[8]->returnType(),  camp::noType);
     BOOST_CHECK_EQUAL(functions[9]->returnType(),  camp::noType);
     BOOST_CHECK_EQUAL(functions[10]->returnType(), camp::noType);
@@ -113,7 +117,7 @@ BOOST_AUTO_TEST_CASE(argType)
     BOOST_CHECK_THROW(functions[4]->argType(0),  camp::OutOfRange);
     BOOST_CHECK_THROW(functions[5]->argType(0),  camp::OutOfRange);
     BOOST_CHECK_THROW(functions[6]->argType(0),  camp::OutOfRange);
-    BOOST_CHECK_EQUAL(functions[7]->argType(0),  camp::userType);
+    BOOST_CHECK_EQUAL(functions[7]->argType(0),  camp::valueType);
     BOOST_CHECK_THROW(functions[8]->argType(0),  camp::OutOfRange);
     BOOST_CHECK_EQUAL(functions[9]->argType(0),  camp::boolType);
     BOOST_CHECK_EQUAL(functions[10]->argType(0), camp::realType);

@@ -232,6 +232,14 @@ namespace camp_ext
     struct ValueMapper<T, typename boost::enable_if_c<camp::detail::IsDictionary<T>::value>::type>
     {
         static const int type = camp::dictionaryType;
+
+        static camp::CampType typeInfo() 
+        { 
+            camp::DictionaryType dictType;
+            dictType.m_keytype = ValueMapper<typename DictionaryMapper<T>::KeyType>::typeInfo();
+            dictType.m_elementtype = ValueMapper<typename DictionaryMapper<T>::ElementType>::typeInfo();
+            return dictType; 
+        }
     };
 }
 

@@ -27,6 +27,7 @@
 #include <camp/class.hpp>
 #include <camp/simpleproperty.hpp>
 #include <camp/function.hpp>
+#include <camp/typeinfo.hpp>
 #include <map>
 #include <string>
 
@@ -133,6 +134,8 @@ namespace MapperTest
                 T& t = object.get<T>();
                 return t.func(name());
             }
+
+            camp::CampType returnCampType() const { return camp::stringType; }
         };
     };
 

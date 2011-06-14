@@ -97,6 +97,11 @@ public:
     {
     }
 
+    /**
+     * \see Function::returnCampType
+     */
+    CampType returnCampType() const { return camp_ext::ValueMapper<R>::typeInfo(); }
+
 protected:
 
     /**
@@ -128,6 +133,11 @@ public:
         , m_function(function)
     {
     }
+
+    /**
+     * \see Function::returnCampType
+     */
+    CampType returnCampType() const { return camp_ext::ValueMapper<R>::typeInfo(); }
 
 protected:
 
@@ -162,6 +172,11 @@ public:
     {
     }
 
+    /**
+     * \see Function::returnCampType
+     */
+    CampType returnCampType() const { return camp_ext::ValueMapper<R>::typeInfo(); }
+
 protected:
 
     /**
@@ -195,6 +210,11 @@ public:
         , m_function(function)
     {
     }
+
+    /**
+     * \see Function::returnCampType
+     */
+    CampType returnCampType() const { return camp_ext::ValueMapper<R>::typeInfo(); }
 
 protected:
 
@@ -231,6 +251,11 @@ public:
     {
     }
 
+    /**
+     * \see Function::returnCampType
+     */
+    CampType returnCampType() const { return camp_ext::ValueMapper<R>::typeInfo(); }
+
 protected:
 
     /**
@@ -266,6 +291,11 @@ public:
         , m_function(function)
     {
     }
+
+    /**
+     * \see Function::returnCampType
+     */
+    CampType returnCampType() const { return camp_ext::ValueMapper<R>::typeInfo(); }
 
 protected:
 
@@ -306,6 +336,11 @@ public:
     {
     }
 
+    /**
+     * \see Function::returnCampType
+     */
+    CampType returnCampType() const { return camp_ext::ValueMapper<R>::typeInfo(); }
+
 protected:
 
     /**
@@ -338,6 +373,11 @@ public:
         , m_function(boost::bind(function, boost::bind(accessor, _1), _2))
     {
     }
+
+    /**
+     * \see Function::returnCampType
+     */
+    CampType returnCampType() const { return camp_ext::ValueMapper<R>::typeInfo(); }
 
 protected:
 
@@ -374,6 +414,11 @@ public:
     {
     }
 
+    /**
+     * \see Function::returnCampType
+     */
+    CampType returnCampType() const { return camp_ext::ValueMapper<R>::typeInfo(); }
+
 protected:
 
     /**
@@ -409,6 +454,11 @@ public:
         , m_function(boost::bind(function, boost::bind(accessor, _1), _2, _3, _4))
     {
     }
+
+    /**
+     * \see Function::returnCampType
+     */
+    CampType returnCampType() const { return camp_ext::ValueMapper<R>::typeInfo(); }
 
 protected:
 
@@ -447,6 +497,11 @@ public:
     {
     }
 
+    /**
+     * \see Function::returnCampType
+     */
+    CampType returnCampType() const { return camp_ext::ValueMapper<R>::typeInfo(); }
+
 protected:
 
     /**
@@ -484,6 +539,11 @@ public:
         , m_function(boost::bind(function, boost::bind(accessor, _1), _2, _3, _4, _5, _6))
     {
     }
+
+    /**
+     * \see Function::returnCampType
+     */
+    CampType returnCampType() const { return camp_ext::ValueMapper<R>::typeInfo(); }
 
 protected:
 
