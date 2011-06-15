@@ -128,6 +128,22 @@ const Property& Class::property(const std::string& name, bool ownOnly /*= false*
 }
 
 //-------------------------------------------------------------------------------------------------
+std::size_t Class::constructorCount() const
+{
+    return m_constructors.size();
+}
+
+//-------------------------------------------------------------------------------------------------
+const Constructor& Class::constructor(std::size_t index) const
+{
+    // Make sure that the index is not out of range
+    if (index >= m_constructors.size())
+        CAMP_ERROR(OutOfRange(index, m_constructors.size()));
+
+    return *m_constructors[index];
+}
+
+//-------------------------------------------------------------------------------------------------
 UserObject Class::construct(const Args& args) const
 {
     // Search an arguments match among the list of available constructors

@@ -25,6 +25,7 @@
 
 #include <camp/camptype.hpp>
 #include <camp/class.hpp>
+#include <camp/constructor.hpp>
 #include <camp/enum.hpp>
 #include <string>
 
@@ -99,6 +100,7 @@ namespace ConstructorTest
             .constructor2<long, double>()
             .constructor3<long, double, std::string>()
             .constructor4<long, double, std::string, MyEnum>()
+            .constructor5<long, double, std::string, MyEnum, MyType>()
 
             // trying types that don't exactly match those declared
             .constructor5<unsigned short, float, std::string, MyEnum, int>();

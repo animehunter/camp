@@ -83,6 +83,14 @@ template <typename T>
 class ConstructorImpl0 : public Constructor
 {
 public:
+    
+    /**
+     * \brief Constructor
+     */
+    ConstructorImpl0()
+        : Constructor()
+    {
+    }
 
     /**
      * \see Constructor::matches
@@ -110,6 +118,14 @@ class ConstructorImpl1 : public Constructor
 public:
 
     /**
+     * \brief Constructor
+     */
+    ConstructorImpl1()
+        : Constructor(list_of(mapType<A0>()), list_of(camp_ext::ValueMapper<A0>::typeInfo()))
+    {
+    }
+
+    /**
      * \see Constructor::matches
      */
     virtual bool matches(const Args& args) const
@@ -134,6 +150,15 @@ template <typename T, typename A0, typename A1>
 class ConstructorImpl2 : public Constructor
 {
 public:
+    
+    /**
+     * \brief Constructor
+     */
+    ConstructorImpl2()
+        : Constructor(list_of(mapType<A0>())(mapType<A1>()), 
+            list_of(camp_ext::ValueMapper<A0>::typeInfo())(camp_ext::ValueMapper<A1>::typeInfo()))
+    {
+    }
 
     /**
      * \see Constructor::matches
@@ -162,6 +187,15 @@ template <typename T, typename A0, typename A1, typename A2>
 class ConstructorImpl3 : public Constructor
 {
 public:
+
+    /**
+     * \brief Constructor
+     */
+    ConstructorImpl3()
+        : Constructor(list_of(mapType<A0>())(mapType<A1>())(mapType<A2>()), 
+            list_of(camp_ext::ValueMapper<A0>::typeInfo())(camp_ext::ValueMapper<A1>::typeInfo())(camp_ext::ValueMapper<A2>::typeInfo()))
+    {
+    }
 
     /**
      * \see Constructor::matches
@@ -194,6 +228,15 @@ class ConstructorImpl4 : public Constructor
 public:
 
     /**
+     * \brief Constructor
+     */
+    ConstructorImpl4()
+        : Constructor(list_of(mapType<A0>())(mapType<A1>())(mapType<A2>())(mapType<A3>()), 
+            list_of(camp_ext::ValueMapper<A0>::typeInfo())(camp_ext::ValueMapper<A1>::typeInfo())(camp_ext::ValueMapper<A2>::typeInfo())(camp_ext::ValueMapper<A3>::typeInfo()))
+    {
+    }
+
+    /**
      * \see Constructor::matches
      */
     virtual bool matches(const Args& args) const
@@ -224,6 +267,15 @@ template <typename T, typename A0, typename A1, typename A2, typename A3, typena
 class ConstructorImpl5 : public Constructor
 {
 public:
+
+    /**
+     * \brief Constructor
+     */
+    ConstructorImpl5()
+        : Constructor(list_of(mapType<A0>())(mapType<A1>())(mapType<A2>())(mapType<A3>())(mapType<A4>()), 
+            list_of(camp_ext::ValueMapper<A0>::typeInfo())(camp_ext::ValueMapper<A1>::typeInfo())(camp_ext::ValueMapper<A2>::typeInfo())(camp_ext::ValueMapper<A3>::typeInfo())(camp_ext::ValueMapper<A4>::typeInfo()))
+    {
+    }
 
     /**
      * \see Constructor::matches

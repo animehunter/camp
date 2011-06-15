@@ -26,14 +26,14 @@
 
 
 #include <camp/config.hpp>
-#include <camp/args.hpp>
+#include <camp/typeinfo.hpp>
 #include <vector>
 
 
 namespace camp
 {
-class Value;
 class UserObject;
+class Args;
 
 /**
  * \brief camp::Constructor represents a metaconstructor which is used to create objects instances from metaclasses
@@ -42,14 +42,43 @@ class UserObject;
  *
  * \sa Property, Function
  */
-class Constructor
+class CAMP_API Constructor
 {
 public:
 
     /**
      * \brief Destructor
      */
-    virtual ~Constructor() {}
+    virtual ~Constructor();
+
+    /**
+     * \brief Get the number of arguments of the constructor
+     *
+     * \return Total number of arguments taken by the constructor
+     */
+    std::size_t argCount() const;
+
+    /**
+     * \brief Get the type of an argument given by its index
+     *
+     * \param index Index of the argument
+     *
+     * \return Type of the index-th argument
+     *
+     * \throw OutOfRange index is out of range
+     */
+    Type argType(std::size_t index) const;
+
+    /**
+     * \brief Get the type info of an argument given by its index
+     *
+     * \param index Index of the argument
+     *
+     * \return Type info of the index-th argument
+     *
+     * \throw OutOfRange index is out of range
+     */
+    TypeInfo argTypeInfo(std::size_t index) const;
 
     /**
      * \brief Check if the constructor matches the given set of arguments
@@ -68,6 +97,24 @@ public:
      * \return Pointer to the new object wrapped in a UserObject, or UserObject::nothing on failure
      */
     virtual UserObject create(const Args& args) const = 0;
+
+protected:
+
+    template <typename T> friend class ClassBuilder;
+
+    /**
+     * \brief Construct the constructor from its description
+     *
+     * \param argTypes Types of the constructor arguments (empty array by default)
+     * \param argTypeInfo Type info of the constructor arguments (empty array by default)
+     */
+    Constructor(const std::vector<Type>& argTypes = std::vector<Type>(), 
+        const std::vector<TypeInfo>& argTypeInfo = std::vector<TypeInfo>());
+
+private:
+
+    std::vector<Type> m_argTypes; ///< Type of all the function arguments
+    std::vector<TypeInfo> m_argTypeInfo; ///< Type info of all the function arguments
 };
 
 } // namespace camp

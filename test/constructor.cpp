@@ -53,6 +53,32 @@ BOOST_AUTO_TEST_CASE(invalidConstructions)
 }
 
 //-----------------------------------------------------------------------------
+BOOST_AUTO_TEST_CASE(argCount)
+{
+    BOOST_CHECK_EQUAL(metaclass->constructor(0).argCount(), 0);
+    BOOST_CHECK_EQUAL(metaclass->constructor(1).argCount(), 1);
+    BOOST_CHECK_EQUAL(metaclass->constructor(2).argCount(), 2);
+    BOOST_CHECK_EQUAL(metaclass->constructor(3).argCount(), 3);
+    BOOST_CHECK_EQUAL(metaclass->constructor(4).argCount(), 4);
+    BOOST_CHECK_EQUAL(metaclass->constructor(5).argCount(), 5);
+    BOOST_CHECK_EQUAL(metaclass->constructor(6).argCount(), 5);
+}
+
+//-----------------------------------------------------------------------------
+BOOST_AUTO_TEST_CASE(argType)
+{
+    const camp::Constructor& constructor = metaclass->constructor(5);
+    BOOST_CHECK_EQUAL(constructor.argType(0), camp::intType);
+    BOOST_CHECK_EQUAL(boost::get<camp::Type>(constructor.argTypeInfo(0)), camp::intType);
+    BOOST_CHECK_EQUAL(constructor.argType(1), camp::realType);
+    BOOST_CHECK_EQUAL(constructor.argType(2), camp::stringType);
+    BOOST_CHECK_EQUAL(constructor.argType(3), camp::enumType);
+    BOOST_CHECK(*boost::get<const camp::Enum*>(constructor.argTypeInfo(3)) == camp::enumByType<MyEnum>());
+    BOOST_CHECK_EQUAL(constructor.argType(4), camp::userType);
+    BOOST_CHECK(*boost::get<const camp::Class*>(constructor.argTypeInfo(4)) == camp::classByType<MyType>());
+}
+
+//-----------------------------------------------------------------------------
 BOOST_AUTO_TEST_CASE(zeroArg)
 {
     camp::UserObject object = metaclass->construct();

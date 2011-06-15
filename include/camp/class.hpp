@@ -242,6 +242,24 @@ public:
     const Property& property(const std::string& name, bool ownOnly = false) const;
 
     /**
+     * \brief Return the total number of constructors of this metaclass
+     *
+     * \return Number of constructors
+     */
+    std::size_t constructorCount() const;
+
+    /**
+     * \brief Get a constructor from its index in this metaclass
+     *
+     * \param index Index of the constructor to get
+     *
+     * \return Reference to the constructor
+     *
+     * \throw OutOfRange index is out of range
+     */
+    const Constructor& constructor(std::size_t index) const;
+
+    /**
      * \brief Construct a new instance of the C++ class bound to the metaclass
      *
      * If no constructor can match the provided arguments, UserObject::nothing

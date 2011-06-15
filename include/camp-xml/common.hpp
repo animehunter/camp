@@ -27,6 +27,8 @@
 #include <camp/valuemapper.hpp>
 #include <camp/value.hpp>
 #include <camp/arrayproperty.hpp>
+#include <camp/dictionaryproperty.hpp>
+#include <camp/typeinfo.hpp>
 #include <string>
 
 namespace camp
