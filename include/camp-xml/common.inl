@@ -342,7 +342,7 @@ void deserialize(const UserObject& object, typename Proxy::NodeType node, const 
 	                    if (dictionaryProperty.keyType() == userType)
 	                    {
 	                        // The dictionary keys are composed objects: deserialize them recursively
-	                        UserObject keyObject = dictionaryProperty.keyClass().construct();
+	                        UserObject keyObject = boost::get<const camp::Class*>(dictionaryProperty.keyTypeInfo())->construct();
 	                        deserialize<Proxy>(keyObject, key, tag, include, throwExceptions);
 	                        keyValue = keyObject;
 	                    }
