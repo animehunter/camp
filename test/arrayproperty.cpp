@@ -55,19 +55,27 @@ BOOST_FIXTURE_TEST_SUITE(ARRAYPROPERTY, ArrayPropertyFixture)
 //-----------------------------------------------------------------------------
 BOOST_AUTO_TEST_CASE(type)
 {
-    BOOST_CHECK_EQUAL(bools->type(),   camp::arrayType);
-    BOOST_CHECK_EQUAL(ints->type(),    camp::arrayType);
+    BOOST_CHECK_EQUAL(bools->type(), camp::arrayType);
+    BOOST_CHECK(bools->typeInfo() == camp::TypeInfo(camp::ArrayType(camp::boolType)));
+    BOOST_CHECK_EQUAL(ints->type(), camp::arrayType);
+    BOOST_CHECK(ints->typeInfo() == camp::TypeInfo(camp::ArrayType(camp::intType)));
     BOOST_CHECK_EQUAL(strings->type(), camp::arrayType);
+    BOOST_CHECK(strings->typeInfo() == camp::TypeInfo(camp::ArrayType(camp::stringType)));
     BOOST_CHECK_EQUAL(objects->type(), camp::arrayType);
+    BOOST_CHECK(objects->typeInfo() == camp::TypeInfo(camp::ArrayType(&camp::classByType<MyType>())));
 }
 
 //-----------------------------------------------------------------------------
 BOOST_AUTO_TEST_CASE(elementType)
 {
-    BOOST_CHECK_EQUAL(bools->elementType(),   camp::boolType);
-    BOOST_CHECK_EQUAL(ints->elementType(),    camp::intType);
+    BOOST_CHECK_EQUAL(bools->elementType(), camp::boolType);
+    BOOST_CHECK_EQUAL(boost::get<camp::Type>(bools->elementTypeInfo()), camp::boolType);
+    BOOST_CHECK_EQUAL(ints->elementType(), camp::intType);
+    BOOST_CHECK_EQUAL(boost::get<camp::Type>(ints->elementTypeInfo()), camp::intType);
     BOOST_CHECK_EQUAL(strings->elementType(), camp::stringType);
+    BOOST_CHECK_EQUAL(boost::get<camp::Type>(strings->elementTypeInfo()), camp::stringType);
     BOOST_CHECK_EQUAL(objects->elementType(), camp::userType);
+    BOOST_CHECK(*boost::get<const camp::Class*>(objects->elementTypeInfo()) == camp::classByType<MyType>());
 }
 
 //-----------------------------------------------------------------------------

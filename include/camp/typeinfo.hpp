@@ -25,6 +25,7 @@
 #define CAMP_TYPEINFO_HPP
 
 
+#include <camp/config.hpp>
 #include <camp/type.hpp>
 #include <boost/variant/variant.hpp>
 #include <boost/variant/recursive_wrapper.hpp>
@@ -46,7 +47,7 @@ typedef boost::variant< Type, const camp::Enum*, const camp::Class*, boost::recu
 /**
  * \brief Type info for \c arrayType.
  */
-class ArrayType
+class CAMP_API ArrayType
 {
 public:
 
@@ -55,14 +56,39 @@ public:
      *
      * \param elementTypeInfo Type info of the dictionary element
      */
-    ArrayType(const TypeInfo& elementTypeInfo): m_elementType(elementTypeInfo) {}
+    ArrayType(TypeInfo elementTypeInfo);
+
+    /**
+     * \brief Destructor
+     */
+    virtual ~ArrayType() {}
 
     /**
      * \brief Get the type info of the elements
      *
      * \return Type info of the elements
      */
-    inline TypeInfo elements() { return m_elementType; }
+    TypeInfo elements() const;
+
+    /**
+     * \brief Operator == to check equality between two array types
+     *
+     * Two array types are equal if their element types are the same
+     *
+     * \param other array type to compare with this
+     *
+     * \return True if both array types are the same, false otherwise
+     */
+    bool operator==(const ArrayType& other) const;
+
+    /**
+     * \brief Operator != to check inequality between two array types
+     *
+     * \param other array type to compare with this
+     *
+     * \return True if array types are different, false if they are equal
+     */
+     bool operator!=(const ArrayType& other) const;
 
 private:
 
@@ -72,7 +98,7 @@ private:
 /**
  * \brief Type info for \c dictionaryType.
  */
-class DictionaryType
+class CAMP_API DictionaryType
 {
 public:
 
@@ -82,21 +108,46 @@ public:
      * \param keyTypeInfo Type info of the dictionary key
      * \param elementTypeInfo Type info of the dictionary element
      */
-    DictionaryType(const TypeInfo& keyTypeInfo, const TypeInfo& elementTypeInfo): m_keyType(keyTypeInfo), m_elementType(elementTypeInfo) {}
+    DictionaryType(TypeInfo keyTypeInfo, TypeInfo elementTypeInfo);
+
+    /**
+     * \brief Destructor
+     */
+    virtual ~DictionaryType() {}
 
     /**
      * \brief Get the type info of the keys
      *
      * \return Type info of the keys
      */
-    inline TypeInfo keys() { return m_keyType; }
+    TypeInfo keys() const;
 
     /**
      * \brief Get the type info of the elements
      *
      * \return Type info of the elements
      */
-    inline TypeInfo elements() { return m_elementType; }
+    TypeInfo elements() const;
+
+    /**
+     * \brief Operator == to check equality between two dictionary types
+     *
+     * Two dictionary types are equal if their key and element types are the same
+     *
+     * \param other dictionary type to compare with this
+     *
+     * \return True if both dictionary types are the same, false otherwise
+     */
+    bool operator==(const DictionaryType& other) const;
+
+    /**
+     * \brief Operator != to check inequality between two dictionary types
+     *
+     * \param other dictionary type to compare with this
+     *
+     * \return True if dictionary types are different, false if they are equal
+     */
+     bool operator!=(const DictionaryType& other) const;
 
 private:
 

@@ -53,21 +53,27 @@ BOOST_FIXTURE_TEST_SUITE(DICTIONARYPROPERTY, DictionaryPropertyFixture)
 BOOST_AUTO_TEST_CASE(type)
 {
     BOOST_CHECK_EQUAL(mapDict->type(), camp::dictionaryType);
+    BOOST_CHECK(mapDict->typeInfo() == camp::TypeInfo(camp::DictionaryType(camp::stringType, &camp::classByType<MyType>())));
     BOOST_CHECK_EQUAL(setDict->type(), camp::dictionaryType);
+    BOOST_CHECK(setDict->typeInfo() == camp::TypeInfo(camp::DictionaryType(&camp::classByType<MyType>(), &camp::classByType<MyType>())));
 }
 
 //-----------------------------------------------------------------------------
 BOOST_AUTO_TEST_CASE(keyType)
 {
     BOOST_CHECK_EQUAL(mapDict->keyType(), camp::stringType);
+    BOOST_CHECK_EQUAL(boost::get<camp::Type>(mapDict->keyTypeInfo()), camp::stringType);
     BOOST_CHECK_EQUAL(setDict->keyType(), camp::userType);
+    BOOST_CHECK(*boost::get<const camp::Class*>(setDict->keyTypeInfo()) == camp::classByType<MyType>());
 }
 
 //-----------------------------------------------------------------------------
 BOOST_AUTO_TEST_CASE(elementType)
 {
     BOOST_CHECK_EQUAL(mapDict->elementType(), camp::userType);
+    BOOST_CHECK(*boost::get<const camp::Class*>(mapDict->elementTypeInfo()) == camp::classByType<MyType>());
     BOOST_CHECK_EQUAL(setDict->elementType(), camp::userType);
+    BOOST_CHECK(*boost::get<const camp::Class*>(setDict->elementTypeInfo()) == camp::classByType<MyType>());
 }
 
 //-----------------------------------------------------------------------------

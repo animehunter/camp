@@ -49,6 +49,12 @@ Type ArrayProperty::elementType() const
 }
 
 //-------------------------------------------------------------------------------------------------
+TypeInfo ArrayProperty::elementTypeInfo() const
+{
+    return m_elementTypeInfo;
+}
+
+//-------------------------------------------------------------------------------------------------
 bool ArrayProperty::dynamic() const
 {
     return m_dynamic;
