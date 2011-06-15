@@ -233,7 +233,7 @@ namespace camp_ext
     {
         static const int type = camp::dictionaryType;
 
-        static camp::CampType typeInfo() 
+        static camp::TypeInfo typeInfo() 
         { 
             camp::DictionaryType dictType;
             dictType.m_keytype = ValueMapper<typename DictionaryMapper<T>::KeyType>::typeInfo();

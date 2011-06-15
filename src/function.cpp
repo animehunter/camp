@@ -52,6 +52,12 @@ Type Function::returnType() const
 }
 
 //-------------------------------------------------------------------------------------------------
+TypeInfo Function::returnTypeInfo() const
+{
+    return m_returnTypeInfo;
+}
+
+//-------------------------------------------------------------------------------------------------
 Type Function::argType(std::size_t index) const
 {
     // Make sure that the index is not out of range
@@ -59,6 +65,16 @@ Type Function::argType(std::size_t index) const
         CAMP_ERROR(OutOfRange(index, m_argTypes.size()));
 
     return m_argTypes[index];
+}
+
+//-------------------------------------------------------------------------------------------------
+TypeInfo Function::argTypeInfo(std::size_t index) const
+{
+    // Make sure that the index is not out of range
+    if (index >= m_argTypeInfo.size())
+        CAMP_ERROR(OutOfRange(index, m_argTypeInfo.size()));
+
+    return m_argTypeInfo[index];
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -89,10 +105,13 @@ void Function::accept(ClassVisitor& visitor) const
 }
 
 //-------------------------------------------------------------------------------------------------
-Function::Function(const std::string& name, Type returnType, const std::vector<Type>& argTypes)
+Function::Function(const std::string& name, Type returnType, TypeInfo returnTypeInfo, const std::vector<Type>& argTypes,
+    const std::vector<TypeInfo>& argTypeInfo)
     : m_name(name)
     , m_returnType(returnType)
+    , m_returnTypeInfo(returnTypeInfo)
     , m_argTypes(argTypes)
+    , m_argTypeInfo(argTypeInfo)
     , m_callable(true)
 {
 }

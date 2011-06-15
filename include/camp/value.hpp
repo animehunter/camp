@@ -244,7 +244,7 @@ struct ValueMapper<camp::Value>
     static camp::Value from(const camp::UserObject& source) {return camp::Value(source);}
     static camp::Value from(const camp::EnumObject& source) {return camp::Value(source);}
 
-    static camp::CampType typeInfo() { return camp::valueType; }
+    static camp::TypeInfo typeInfo() { return camp::valueType; }
 };
 } // namespace camp_ext
 

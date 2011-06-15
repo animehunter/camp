@@ -92,15 +92,10 @@ public:
      * \brief Constructor
      */
     FunctionImpl(const std::string& name, boost::function<R (C)> function)
-        : Function(name, mapType<R>())
+        : Function(name, mapType<R>(), camp_ext::ValueMapper<R>::typeInfo())
         , m_function(function)
     {
     }
-
-    /**
-     * \see Function::returnCampType
-     */
-    CampType returnCampType() const { return camp_ext::ValueMapper<R>::typeInfo(); }
 
 protected:
 
@@ -129,15 +124,11 @@ public:
      * \brief Constructor
      */
     FunctionImpl(const std::string& name, boost::function<R (C, A0)> function)
-        : Function(name, mapType<R>(), list_of(mapType<A0>()))
+        : Function(name, mapType<R>(), camp_ext::ValueMapper<R>::typeInfo(), list_of(mapType<A0>()),
+            list_of(camp_ext::ValueMapper<A0>::typeInfo()))
         , m_function(function)
     {
     }
-
-    /**
-     * \see Function::returnCampType
-     */
-    CampType returnCampType() const { return camp_ext::ValueMapper<R>::typeInfo(); }
 
 protected:
 
@@ -167,15 +158,12 @@ public:
      * \brief Constructor
      */
     FunctionImpl(const std::string& name, boost::function<R (C, A0, A1)> function)
-        : Function(name, mapType<R>(), list_of(mapType<A0>())(mapType<A1>()))
+        : Function(name, mapType<R>(), camp_ext::ValueMapper<R>::typeInfo(), 
+            list_of(mapType<A0>())(mapType<A1>()),
+            list_of(camp_ext::ValueMapper<A0>::typeInfo())(camp_ext::ValueMapper<A1>::typeInfo()))
         , m_function(function)
     {
     }
-
-    /**
-     * \see Function::returnCampType
-     */
-    CampType returnCampType() const { return camp_ext::ValueMapper<R>::typeInfo(); }
 
 protected:
 
@@ -206,15 +194,12 @@ public:
      * \brief Constructor
      */
     FunctionImpl(const std::string& name, boost::function<R (C, A0, A1, A2)> function)
-        : Function(name, mapType<R>(), list_of(mapType<A0>())(mapType<A1>())(mapType<A2>()))
+        : Function(name, mapType<R>(), camp_ext::ValueMapper<R>::typeInfo(), 
+            list_of(mapType<A0>())(mapType<A1>())(mapType<A2>()),
+            list_of(camp_ext::ValueMapper<A0>::typeInfo())(camp_ext::ValueMapper<A1>::typeInfo())(camp_ext::ValueMapper<A2>::typeInfo()))
         , m_function(function)
     {
     }
-
-    /**
-     * \see Function::returnCampType
-     */
-    CampType returnCampType() const { return camp_ext::ValueMapper<R>::typeInfo(); }
 
 protected:
 
@@ -246,15 +231,12 @@ public:
      * \brief Constructor
      */
     FunctionImpl(const std::string& name, boost::function<R (C, A0, A1, A2, A3)> function)
-        : Function(name, mapType<R>(), list_of(mapType<A0>())(mapType<A1>())(mapType<A2>())(mapType<A3>()))
+        : Function(name, mapType<R>(), camp_ext::ValueMapper<R>::typeInfo(), 
+            list_of(mapType<A0>())(mapType<A1>())(mapType<A2>())(mapType<A3>()),
+            list_of(camp_ext::ValueMapper<A0>::typeInfo())(camp_ext::ValueMapper<A1>::typeInfo())(camp_ext::ValueMapper<A2>::typeInfo())(camp_ext::ValueMapper<A3>::typeInfo()))
         , m_function(function)
     {
     }
-
-    /**
-     * \see Function::returnCampType
-     */
-    CampType returnCampType() const { return camp_ext::ValueMapper<R>::typeInfo(); }
 
 protected:
 
@@ -287,15 +269,12 @@ public:
      * \brief Constructor
      */
     FunctionImpl(const std::string& name, boost::function<R (C, A0, A1, A2, A3, A4)> function)
-        : Function(name, mapType<R>(), list_of(mapType<A0>())(mapType<A1>())(mapType<A2>())(mapType<A3>())(mapType<A4>()))
+        : Function(name, mapType<R>(), camp_ext::ValueMapper<R>::typeInfo(), 
+            list_of(mapType<A0>())(mapType<A1>())(mapType<A2>())(mapType<A3>())(mapType<A4>()),
+            list_of(camp_ext::ValueMapper<A0>::typeInfo())(camp_ext::ValueMapper<A1>::typeInfo())(camp_ext::ValueMapper<A2>::typeInfo())(camp_ext::ValueMapper<A3>::typeInfo())(camp_ext::ValueMapper<A4>::typeInfo()))
         , m_function(function)
     {
     }
-
-    /**
-     * \see Function::returnCampType
-     */
-    CampType returnCampType() const { return camp_ext::ValueMapper<R>::typeInfo(); }
 
 protected:
 
@@ -331,15 +310,10 @@ public:
      */
     template <typename F1, typename F2>
     FunctionImpl(const std::string& name, F1 function, F2 accessor)
-        : Function(name, mapType<R>())
+        : Function(name, mapType<R>(), camp_ext::ValueMapper<R>::typeInfo())
         , m_function(boost::bind(function, boost::bind(accessor, _1)))
     {
     }
-
-    /**
-     * \see Function::returnCampType
-     */
-    CampType returnCampType() const { return camp_ext::ValueMapper<R>::typeInfo(); }
 
 protected:
 
@@ -369,15 +343,11 @@ public:
      */
     template <typename F1, typename F2>
     FunctionImpl(const std::string& name, F1 function, F2 accessor)
-        : Function(name, mapType<R>(), list_of(mapType<A0>()))
+        : Function(name, mapType<R>(), camp_ext::ValueMapper<R>::typeInfo(), list_of(mapType<A0>()),
+        list_of(camp_ext::ValueMapper<A0>::typeInfo()))
         , m_function(boost::bind(function, boost::bind(accessor, _1), _2))
     {
     }
-
-    /**
-     * \see Function::returnCampType
-     */
-    CampType returnCampType() const { return camp_ext::ValueMapper<R>::typeInfo(); }
 
 protected:
 
@@ -409,15 +379,12 @@ public:
      */
     template <typename F1, typename F2>
     FunctionImpl(const std::string& name, F1 function, F2 accessor)
-        : Function(name, mapType<R>(), list_of(mapType<A0>())(mapType<A1>()))
+        : Function(name, mapType<R>(), camp_ext::ValueMapper<R>::typeInfo(), 
+            list_of(mapType<A0>())(mapType<A1>()),
+            list_of(camp_ext::ValueMapper<A0>::typeInfo())(camp_ext::ValueMapper<A1>::typeInfo()))
         , m_function(boost::bind(function, boost::bind(accessor, _1), _2, _3))
     {
     }
-
-    /**
-     * \see Function::returnCampType
-     */
-    CampType returnCampType() const { return camp_ext::ValueMapper<R>::typeInfo(); }
 
 protected:
 
@@ -450,15 +417,12 @@ public:
      */
     template <typename F1, typename F2>
     FunctionImpl(const std::string& name, F1 function, F2 accessor)
-        : Function(name, mapType<R>(), list_of(mapType<A0>())(mapType<A1>())(mapType<A2>()))
+        : Function(name, mapType<R>(), camp_ext::ValueMapper<R>::typeInfo(), 
+            list_of(mapType<A0>())(mapType<A1>())(mapType<A2>()),
+            list_of(camp_ext::ValueMapper<A0>::typeInfo())(camp_ext::ValueMapper<A1>::typeInfo())(camp_ext::ValueMapper<A2>::typeInfo()))
         , m_function(boost::bind(function, boost::bind(accessor, _1), _2, _3, _4))
     {
     }
-
-    /**
-     * \see Function::returnCampType
-     */
-    CampType returnCampType() const { return camp_ext::ValueMapper<R>::typeInfo(); }
 
 protected:
 
@@ -492,15 +456,12 @@ public:
      */
     template <typename F1, typename F2>
     FunctionImpl(const std::string& name, F1 function, F2 accessor)
-        : Function(name, mapType<R>(), list_of(mapType<A0>())(mapType<A1>())(mapType<A2>())(mapType<A3>()))
+        : Function(name, mapType<R>(), camp_ext::ValueMapper<R>::typeInfo(), 
+            list_of(mapType<A0>())(mapType<A1>())(mapType<A2>())(mapType<A3>()),
+            list_of(camp_ext::ValueMapper<A0>::typeInfo())(camp_ext::ValueMapper<A1>::typeInfo())(camp_ext::ValueMapper<A2>::typeInfo())(camp_ext::ValueMapper<A3>::typeInfo()))
         , m_function(boost::bind(function, boost::bind(accessor, _1), _2, _3, _4, _5))
     {
     }
-
-    /**
-     * \see Function::returnCampType
-     */
-    CampType returnCampType() const { return camp_ext::ValueMapper<R>::typeInfo(); }
 
 protected:
 
@@ -535,15 +496,12 @@ public:
      */
     template <typename F1, typename F2>
     FunctionImpl(const std::string& name, F1 function, F2 accessor)
-        : Function(name, mapType<R>(), list_of(mapType<A0>())(mapType<A1>())(mapType<A2>())(mapType<A3>())(mapType<A4>()))
+        : Function(name, mapType<R>(), camp_ext::ValueMapper<R>::typeInfo(), 
+            list_of(mapType<A0>())(mapType<A1>())(mapType<A2>())(mapType<A3>())(mapType<A4>()),
+            list_of(camp_ext::ValueMapper<A0>::typeInfo())(camp_ext::ValueMapper<A1>::typeInfo())(camp_ext::ValueMapper<A2>::typeInfo())(camp_ext::ValueMapper<A3>::typeInfo())(camp_ext::ValueMapper<A4>::typeInfo()))
         , m_function(boost::bind(function, boost::bind(accessor, _1), _2, _3, _4, _5, _6))
     {
     }
-
-    /**
-     * \see Function::returnCampType
-     */
-    CampType returnCampType() const { return camp_ext::ValueMapper<R>::typeInfo(); }
 
 protected:
 

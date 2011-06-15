@@ -83,7 +83,7 @@ public:
      *
      * \return Type info of the result of the function
      */
-    virtual CampType returnCampType() const = 0;
+    TypeInfo returnTypeInfo() const;
 
     /**
      * \brief Get the type of an argument given by its index
@@ -95,6 +95,17 @@ public:
      * \throw OutOfRange index is out of range
      */
     Type argType(std::size_t index) const;
+
+    /**
+     * \brief Get the type info of an argument given by its index
+     *
+     * \param index Index of the argument
+     *
+     * \return Type info of the index-th argument
+     *
+     * \throw OutOfRange index is out of range
+     */
+    TypeInfo argTypeInfo(std::size_t index) const;
 
     /**
      * \brief Check if the function is currently callable for a given object
@@ -138,11 +149,14 @@ protected:
      *
      * \param name Name of the function
      * \param returnType Type of the function result
+     * \param returnTypeInfo Type info of the function result
      * \param argTypes Types of the function arguments (empty array by default)
+     * \param argTypeInfo Type info of the function arguments (empty array by default)
      *
      * \return Value returned by the function call
      */
-    Function(const std::string& name, Type returnType, const std::vector<Type>& argTypes = std::vector<Type>());
+    Function(const std::string& name, Type returnType, TypeInfo returnTypeInfo, const std::vector<Type>& argTypes = std::vector<Type>(), 
+        const std::vector<TypeInfo>& argTypeInfo = std::vector<TypeInfo>());
 
     /**
      * \brief Do the actual call
@@ -163,7 +177,9 @@ private:
 
     std::string m_name; ///< Name of the function
     Type m_returnType; ///< Return type
+    TypeInfo m_returnTypeInfo; ///< Return type info
     std::vector<Type> m_argTypes; ///< Type of all the function arguments
+    std::vector<TypeInfo> m_argTypeInfo; ///< Type info of all the function arguments
     detail::Getter<bool> m_callable; ///< Accessor to get the callable state of the function
 };
 

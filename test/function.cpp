@@ -54,14 +54,14 @@ BOOST_FIXTURE_TEST_SUITE(FUNCTION, FunctionFixture)
 BOOST_AUTO_TEST_CASE(returnType)
 {
     BOOST_CHECK_EQUAL(functions[1]->returnType(),  camp::noType);
-    BOOST_CHECK_EQUAL(boost::get<camp::Type>(functions[1]->returnCampType()), camp::noType);
+    BOOST_CHECK_EQUAL(boost::get<camp::Type>(functions[1]->returnTypeInfo()), camp::noType);
     BOOST_CHECK_EQUAL(functions[2]->returnType(),  camp::intType);
-    BOOST_CHECK_EQUAL(boost::get<camp::Type>(functions[2]->returnCampType()), camp::intType);
+    BOOST_CHECK_EQUAL(boost::get<camp::Type>(functions[2]->returnTypeInfo()), camp::intType);
     BOOST_CHECK_EQUAL(functions[3]->returnType(),  camp::stringType);
     BOOST_CHECK_EQUAL(functions[4]->returnType(),  camp::userType);
-    BOOST_CHECK(boost::get<const camp::Class&>(functions[4]->returnCampType()) == camp::classByType<MyType>());
+    BOOST_CHECK(*boost::get<const camp::Class*>(functions[4]->returnTypeInfo()) == camp::classByType<MyType>());
     BOOST_CHECK_EQUAL(functions[5]->returnType(),  camp::userType);
-    BOOST_CHECK(boost::get<const camp::Class&>(functions[5]->returnCampType()) == camp::classByType<MyType>());
+    BOOST_CHECK(*boost::get<const camp::Class*>(functions[5]->returnTypeInfo()) == camp::classByType<MyType>());
     BOOST_CHECK_EQUAL(functions[6]->returnType(),  camp::noType);
     BOOST_CHECK_EQUAL(functions[7]->returnType(),  camp::valueType);
     BOOST_CHECK_EQUAL(functions[8]->returnType(),  camp::noType);
@@ -113,6 +113,7 @@ BOOST_AUTO_TEST_CASE(argType)
 {
     BOOST_CHECK_THROW(functions[1]->argType(0),  camp::OutOfRange);
     BOOST_CHECK_EQUAL(functions[2]->argType(0),  camp::intType);
+    BOOST_CHECK_EQUAL(boost::get<camp::Type>(functions[2]->argTypeInfo(0)), camp::intType);
     BOOST_CHECK_THROW(functions[3]->argType(0),  camp::OutOfRange);
     BOOST_CHECK_THROW(functions[4]->argType(0),  camp::OutOfRange);
     BOOST_CHECK_THROW(functions[5]->argType(0),  camp::OutOfRange);
@@ -129,11 +130,14 @@ BOOST_AUTO_TEST_CASE(argType)
     BOOST_CHECK_EQUAL(functions[12]->argType(1), camp::stringType);
     BOOST_CHECK_EQUAL(functions[12]->argType(2), camp::stringType);
     BOOST_CHECK_EQUAL(functions[12]->argType(3), camp::stringType);
-    BOOST_CHECK_EQUAL(functions[13]->argType(0), camp::enumType);
+    BOOST_CHECK_EQUAL(functions[13]->argType(0), camp::userType);
+    BOOST_CHECK(*boost::get<const camp::Class*>(functions[13]->argTypeInfo(0)) == camp::classByType<MyType>());
     BOOST_CHECK_EQUAL(functions[13]->argType(1), camp::enumType);
     BOOST_CHECK_EQUAL(functions[13]->argType(2), camp::enumType);
-    BOOST_CHECK_EQUAL(functions[13]->argType(3), camp::enumType);
+    BOOST_CHECK_EQUAL(functions[13]->argType(3), camp::userType);
+    BOOST_CHECK(*boost::get<const camp::Class*>(functions[13]->argTypeInfo(3)) == camp::classByType<MyClass>());
     BOOST_CHECK_EQUAL(functions[13]->argType(4), camp::enumType);
+    BOOST_CHECK(*boost::get<const camp::Enum*>(functions[13]->argTypeInfo(4)) == camp::enumByType<MyEnum>());
     //BOOST_CHECK_THROW(functions[14]->argType(0), camp::OutOfRange);
     BOOST_CHECK_THROW(functions[15]->argType(0), camp::OutOfRange);
     BOOST_CHECK_THROW(functions[16]->argType(0), camp::OutOfRange);
@@ -162,7 +166,7 @@ BOOST_AUTO_TEST_CASE(call)
     BOOST_CHECK_EQUAL(functions[10]->call(object, camp::Args(1., 2.f)), camp::Value::nothing);
     BOOST_CHECK_EQUAL(functions[11]->call(object, camp::Args(1, 2, 3)), camp::Value::nothing);
     BOOST_CHECK_EQUAL(functions[12]->call(object, camp::Args("1", "2", "3", "4")), camp::Value::nothing);
-    BOOST_CHECK_EQUAL(functions[13]->call(object, camp::Args(Zero, One, Two, Zero, One)), camp::Value::nothing);
+    BOOST_CHECK_EQUAL(functions[13]->call(object, camp::Args(MyType(1), One, Two, MyClass(), One)), camp::Value::nothing);
     //BOOST_CHECK_EQUAL(functions[14]->call(object, camp::Args()), camp::Value::nothing);
     BOOST_CHECK_EQUAL(functions[15]->call(object, camp::Args()), camp::Value::nothing);
     BOOST_CHECK_EQUAL(functions[16]->call(object, camp::Args()), camp::Value(16));
@@ -194,16 +198,16 @@ BOOST_AUTO_TEST_CASE(callNotEnoughArguments)
 {
     MyClass object;
 
-    BOOST_CHECK_THROW(functions[2]->call(object, camp::Args()),                      camp::NotEnoughArguments);
-    BOOST_CHECK_THROW(functions[7]->call(object, camp::Args()),                      camp::NotEnoughArguments);
-    BOOST_CHECK_THROW(functions[9]->call(object, camp::Args()),                      camp::NotEnoughArguments);
-    BOOST_CHECK_THROW(functions[10]->call(object, camp::Args(1.)),                   camp::NotEnoughArguments);
-    BOOST_CHECK_THROW(functions[11]->call(object, camp::Args(1, 2)),                 camp::NotEnoughArguments);
-    BOOST_CHECK_THROW(functions[12]->call(object, camp::Args("1", "2", "3")),        camp::NotEnoughArguments);
-    BOOST_CHECK_THROW(functions[13]->call(object, camp::Args(Zero, One, Two, Zero)), camp::NotEnoughArguments);
-    BOOST_CHECK_THROW(functions[20]->call(object, camp::Args()),                     camp::NotEnoughArguments);
-    BOOST_CHECK_THROW(functions[21]->call(object, camp::Args()),                     camp::NotEnoughArguments);
-    BOOST_CHECK_THROW(functions[22]->call(object, camp::Args()),                     camp::NotEnoughArguments);
+    BOOST_CHECK_THROW(functions[2]->call(object, camp::Args()), camp::NotEnoughArguments);
+    BOOST_CHECK_THROW(functions[7]->call(object, camp::Args()), camp::NotEnoughArguments);
+    BOOST_CHECK_THROW(functions[9]->call(object, camp::Args()), camp::NotEnoughArguments);
+    BOOST_CHECK_THROW(functions[10]->call(object, camp::Args(1.)), camp::NotEnoughArguments);
+    BOOST_CHECK_THROW(functions[11]->call(object, camp::Args(1, 2)), camp::NotEnoughArguments);
+    BOOST_CHECK_THROW(functions[12]->call(object, camp::Args("1", "2", "3")), camp::NotEnoughArguments);
+    BOOST_CHECK_THROW(functions[13]->call(object, camp::Args(MyType(1), One, Two, MyClass())), camp::NotEnoughArguments);
+    BOOST_CHECK_THROW(functions[20]->call(object, camp::Args()), camp::NotEnoughArguments);
+    BOOST_CHECK_THROW(functions[21]->call(object, camp::Args()), camp::NotEnoughArguments);
+    BOOST_CHECK_THROW(functions[22]->call(object, camp::Args()), camp::NotEnoughArguments);
 }
 
 //-----------------------------------------------------------------------------

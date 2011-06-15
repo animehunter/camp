@@ -82,7 +82,7 @@ namespace FunctionTest
         void f10(float, double) {}
         void f11(short, int, long) {}
         void f12(const std::string&, std::string, const std::string&, std::string) {}
-        void f13(MyEnum, MyEnum, MyEnum, MyEnum, MyEnum) {}
+        void f13(MyType, MyEnum, MyEnum, MyClass, MyEnum) {}
 
         struct Inner
         {

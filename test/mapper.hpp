@@ -125,7 +125,7 @@ namespace MapperTest
         public:
 
             MyFunction(const std::string& name)
-                : camp::Function(name, camp::stringType)
+                : camp::Function(name, camp::stringType, camp::stringType)
             {
             }
 
@@ -135,7 +135,7 @@ namespace MapperTest
                 return t.func(name());
             }
 
-            camp::CampType returnCampType() const { return camp::stringType; }
+            camp::TypeInfo returnTypeInfo() const { return camp::stringType; }
         };
     };
 
