@@ -29,6 +29,7 @@
 #include <camp/detail/getter.hpp>
 #include <camp/tagholder.hpp>
 #include <camp/type.hpp>
+#include <camp/typeinfo.hpp>
 #include <boost/signals2.hpp>
 #include <string>
 
@@ -72,6 +73,13 @@ public:
      * \return Type of the property
      */
     Type type() const;
+
+    /**
+     * \brief Get the type info of the property
+     *
+     * \return Type of the property
+     */
+    TypeInfo typeInfo() const;
 
     /**
      * \brief Check if the property is currently readable for a given object
@@ -163,8 +171,9 @@ protected:
      *
      * \param name Name of the property
      * \param type Type of the property
+     * \param typeInfo Type info of the property
      */
-    Property(const std::string& name, Type type);
+    Property(const std::string& name, Type type, TypeInfo typeInfo);
 
     /**
      * \brief Do the actual reading of the value
@@ -205,6 +214,7 @@ private:
 
     std::string m_name; ///< Name of the property
     Type m_type; ///< Type of the property
+    TypeInfo m_typeInfo; ///< Type info of the property
     detail::Getter<bool> m_readable; ///< Accessor to get the readable state of the property
     detail::Getter<bool> m_writable; ///< Accessor to get the writable state of the property
     mutable OnSet m_setted_signal; ///< Setter signal

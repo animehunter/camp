@@ -54,9 +54,11 @@ BOOST_FIXTURE_TEST_SUITE(PROPERTY, PropertyFixture)
 BOOST_AUTO_TEST_CASE(type)
 {
     BOOST_CHECK_EQUAL(properties[1]->type(),  camp::boolType);
+    BOOST_CHECK_EQUAL(boost::get<camp::Type>(properties[1]->typeInfo()), camp::boolType);
     BOOST_CHECK_EQUAL(properties[2]->type(),  camp::intType);
     BOOST_CHECK_EQUAL(properties[3]->type(),  camp::stringType);
     BOOST_CHECK_EQUAL(properties[4]->type(),  camp::userType);
+    BOOST_CHECK(*boost::get<const camp::Class*>(properties[4]->typeInfo()) == camp::classByType<MyType>());
     BOOST_CHECK_EQUAL(properties[5]->type(),  camp::boolType);
     BOOST_CHECK_EQUAL(properties[6]->type(),  camp::intType);
     //BOOST_CHECK_EQUAL(properties[7]->type(),  camp::stringType);

@@ -29,9 +29,10 @@
 namespace camp
 {
 //-------------------------------------------------------------------------------------------------
-ArrayProperty::ArrayProperty(const std::string& name, Type elementType, bool dynamic)
-    : Property(name, arrayType)
+ArrayProperty::ArrayProperty(const std::string& name, Type elementType, TypeInfo elementTypeInfo, bool dynamic)
+    : Property(name, arrayType, ArrayType(elementTypeInfo))
     , m_elementType(elementType)
+    , m_elementTypeInfo(elementTypeInfo)
     , m_dynamic(dynamic)
 {
 }

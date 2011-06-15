@@ -28,7 +28,8 @@ namespace detail
 //-------------------------------------------------------------------------------------------------
 template <typename A>
 DictionaryPropertyImpl<A>::DictionaryPropertyImpl(const std::string& name, const A& accessor)
-    : DictionaryProperty(name, mapType<KeyType>(), mapType<ElementType>())
+    : DictionaryProperty(name, mapType<KeyType>(), camp_ext::ValueMapper<KeyType>::typeInfo(), 
+    mapType<ElementType>(), camp_ext::ValueMapper<ElementType>::typeInfo())
     , m_accessor(accessor)
 {
 }
@@ -80,20 +81,6 @@ template <typename A>
 typename DictionaryPropertyImpl<A>::DictionaryType& DictionaryPropertyImpl<A>::dictionary(const UserObject& object) const
 {
     return m_accessor.get(object.get<typename A::ClassType>());
-}
-
-//-------------------------------------------------------------------------------------------------
-template <typename A>
-const Class& DictionaryPropertyImpl<A>::getKeyClass() const
-{
-    return getKeyClassImpl<StaticTypeId<KeyType>::defined>();
-}
-
-//-------------------------------------------------------------------------------------------------
-template <typename A>
-const Class& DictionaryPropertyImpl<A>::getElementClass() const
-{
-    return getElementClassImpl<StaticTypeId<ElementType>::defined>();
 }
 
 } // namespace detail

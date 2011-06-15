@@ -46,10 +46,12 @@ public:
      * \brief Construct the property from its description
      *
      * \param name Name of the property
-     * \param keyType Type of the dictionary key.
-     * \param elementType Type of the dictionary element.
+     * \param keyType Type of the dictionary key
+     * \param keyTypeInfo Type info of the dictionary key
+     * \param elementType Type of the dictionary element
+     * \param elementTypeInfo Type info of the dictionary element
      */
-    DictionaryProperty(const std::string& name, Type keyType, Type elementType);
+    DictionaryProperty(const std::string& name, Type keyType, TypeInfo keyTypeInfo, Type elementType, TypeInfo elementTypeInfo);
 
     /**
      * \brief Destructor
@@ -64,13 +66,11 @@ public:
     Type keyType() const;
 
     /**
-     * \brief Gets the class of the key, if it is a user type.
+     * \brief Get the type info of the dictionary keys
      *
-     * \return Class of the key type.
-     * 
-     * \throw ClassNotFound key is not a user type.
+     * \return Type info of keys
      */
-    const Class& keyClass() const;
+    TypeInfo keyTypeInfo() const;
 
     /**
      * \brief Get the type of the dictionary elements
@@ -80,13 +80,11 @@ public:
     Type elementType() const;
 
     /**
-     * \brief Gets the class of the element, if it is a user type.
+     * \brief Get the type info of the dictionary elements
      *
-     * \return Class of the key element.
-     * 
-     * \throw ClassNotFound element is not a user type.
+     * \return Type info of elements
      */
-    const Class& elementClass() const;
+    TypeInfo elementTypeInfo() const;
 
     /**
      * \brief Get the current size of the array
@@ -284,24 +282,12 @@ protected:
      */
     virtual void removeElement(const UserObject& object, const camp::Value& key) const = 0;
 
-    /**
-     * \brief Do the actual retrieval of the key class.
-     *
-     * \return Class of the key type.
-     */
-    virtual const Class& getKeyClass() const = 0;
-
-    /**
-     * \brief Do the actual retrieval of the element class.
-     *
-     * \return Class of the element type.
-     */
-    virtual const Class& getElementClass() const = 0;
-
 private:
 
     Type m_keyType; ///< Type of the keys of the dictionary
+    TypeInfo m_keyTypeInfo; ///< Type info of the keys of the dictionary
     Type m_elementType; ///< Type of the elements of the dictionary
+    TypeInfo m_elementTypeInfo; ///< Type info of the elements of the dictionary
     mutable OnSet m_setted_signal; ///< Setted signal
     mutable OnSet m_setted_nonwritable_signal; ///< Non-writable setted signal
     mutable OnRemove m_removed_signal; ///< Removed signal

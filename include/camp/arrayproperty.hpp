@@ -47,9 +47,10 @@ public:
      *
      * \param name Name of the property
      * \param elementType Type of the property
+     * \param elementTypeInfo Type info of the property
      * \param dynamic Tells if the array is dynamic or not
      */
-    ArrayProperty(const std::string& name, Type elementType, bool dynamic);
+    ArrayProperty(const std::string& name, Type elementType, TypeInfo elementTypeInfo, bool dynamic);
 
     /**
      * \brief Destructor
@@ -62,6 +63,13 @@ public:
      * \return Type of elements
      */
     Type elementType() const;
+
+    /**
+     * \brief Get the type of the array elements
+     *
+     * \return Type of elements
+     */
+    TypeInfo elementTypeInfo() const;
 
     /**
      * \brief Check if the array is dynamic
@@ -302,6 +310,7 @@ protected:
 private:
 
     Type m_elementType; ///< Type of the individual elements of the array
+    TypeInfo m_elementTypeInfo; ///< Type info of the individual elements of the array
     bool m_dynamic; ///< Is the array dynamic?
     mutable OnInsert m_inserted_signal; ///< Inserted signal
     mutable OnInsert m_inserted_nonwritable_signal; ///< Non-writable inserted signal

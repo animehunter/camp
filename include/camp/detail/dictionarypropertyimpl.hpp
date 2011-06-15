@@ -93,20 +93,6 @@ protected:
      */
     virtual void removeElement(const UserObject& object, const Value& key) const;
 
-    /**
-     * \see DictionaryProperty::getKeyClass
-     */
-    virtual const Class& getKeyClass() const;
-    template <bool B> const Class& getKeyClassImpl() const { CAMP_ERROR(BadType(mapType<KeyType>(), userType)); }
-    template <> const Class& getKeyClassImpl<true>() const { return classByType<KeyType>(); }
-
-    /**
-     * \see DictionaryProperty::getElementClass
-     */
-    virtual const Class& getElementClass() const;
-    template <bool B> const Class& getElementClassImpl() const { CAMP_ERROR(BadType(mapType<ElementType>(), userType)); }
-    template <> const Class& getElementClassImpl<true>() const { return classByType<ElementType>(); }
-
 private:
 
     typedef typename boost::remove_reference<typename A::DataType>::type DictionaryType;

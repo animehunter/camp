@@ -32,8 +32,8 @@
 
 namespace camp
 {
-struct ArrayType;
-struct DictionaryType;
+class ArrayType;
+class DictionaryType;
 class Class;
 class Enum;
 
@@ -46,18 +46,62 @@ typedef boost::variant< Type, const camp::Enum*, const camp::Class*, boost::recu
 /**
  * \brief Type info for \c arrayType.
  */
-struct ArrayType
+class ArrayType
 {
-    TypeInfo m_elementType;
+public:
+
+    /**
+     * \brief Construct an array type from element type info
+     *
+     * \param elementTypeInfo Type info of the dictionary element
+     */
+    ArrayType(const TypeInfo& elementTypeInfo): m_elementType(elementTypeInfo) {}
+
+    /**
+     * \brief Get the type info of the elements
+     *
+     * \return Type info of the elements
+     */
+    inline TypeInfo elements() { return m_elementType; }
+
+private:
+
+    TypeInfo m_elementType;	///< Array element type info
 };
 
 /**
  * \brief Type info for \c dictionaryType.
  */
-struct DictionaryType
+class DictionaryType
 {
-    TypeInfo m_keyType;
-    TypeInfo m_elementType;
+public:
+
+    /**
+     * \brief Construct a dictionary type from key and element type info
+     *
+     * \param keyTypeInfo Type info of the dictionary key
+     * \param elementTypeInfo Type info of the dictionary element
+     */
+    DictionaryType(const TypeInfo& keyTypeInfo, const TypeInfo& elementTypeInfo): m_keyType(keyTypeInfo), m_elementType(elementTypeInfo) {}
+
+    /**
+     * \brief Get the type info of the keys
+     *
+     * \return Type info of the keys
+     */
+    inline TypeInfo keys() { return m_keyType; }
+
+    /**
+     * \brief Get the type info of the elements
+     *
+     * \return Type info of the elements
+     */
+    inline TypeInfo elements() { return m_elementType; }
+
+private:
+
+    TypeInfo m_keyType;	///< Dictionary key type info
+    TypeInfo m_elementType;	///< Dictionary element type info
 };
 
 /**

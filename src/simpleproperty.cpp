@@ -29,7 +29,7 @@ namespace camp
 {
 //-------------------------------------------------------------------------------------------------
 SimpleProperty::SimpleProperty(const std::string& name, Type type)
-    : Property(name, type)
+    : Property(name, type, type)
 {
 }
 

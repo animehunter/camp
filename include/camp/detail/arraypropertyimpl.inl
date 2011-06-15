@@ -28,7 +28,7 @@ namespace detail
 //-------------------------------------------------------------------------------------------------
 template <typename A>
 ArrayPropertyImpl<A>::ArrayPropertyImpl(const std::string& name, const A& accessor)
-    : ArrayProperty(name, mapType<ElementType>(), Mapper::dynamic())
+    : ArrayProperty(name, mapType<ElementType>(), camp_ext::ValueMapper<ElementType>::typeInfo(), Mapper::dynamic())
     , m_accessor(accessor)
 {
 }

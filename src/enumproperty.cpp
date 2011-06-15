@@ -29,7 +29,7 @@ namespace camp
 {
 //-------------------------------------------------------------------------------------------------
 EnumProperty::EnumProperty(const std::string& name, const Enum& propEnum)
-    : Property(name, enumType)
+    : Property(name, enumType, &propEnum)
     , m_enum(&propEnum)
 {
 }

@@ -47,6 +47,12 @@ Type Property::type() const
 }
 
 //-------------------------------------------------------------------------------------------------
+TypeInfo Property::typeInfo() const
+{
+    return m_typeInfo;
+}
+
+//-------------------------------------------------------------------------------------------------
 bool Property::readable(const UserObject& object) const
 {
     return isReadable() && m_readable.get(object);
@@ -123,9 +129,10 @@ bool Property::isWritable() const
 }
 
 //-------------------------------------------------------------------------------------------------
-Property::Property(const std::string& name, Type type)
+Property::Property(const std::string& name, Type type, TypeInfo typeInfo)
     : m_name(name)
     , m_type(type)
+    , m_typeInfo(typeInfo)
     , m_readable(true)
     , m_writable(true)
 {

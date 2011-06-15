@@ -29,10 +29,13 @@
 namespace camp
 {
 //-------------------------------------------------------------------------------------------------
-DictionaryProperty::DictionaryProperty(const std::string& name, Type keyType, Type elementType)
-    : Property(name, dictionaryType)
+DictionaryProperty::DictionaryProperty(const std::string& name, Type keyType, TypeInfo keyTypeInfo, 
+    Type elementType, TypeInfo elementTypeInfo)
+    : Property(name, dictionaryType, DictionaryType(keyTypeInfo, elementTypeInfo))
     , m_keyType(keyType)
+    , m_keyTypeInfo(keyTypeInfo)
     , m_elementType(elementType)
+    , m_elementTypeInfo(elementTypeInfo)
 {
 }
 
@@ -48,9 +51,9 @@ Type DictionaryProperty::keyType() const
 }
 
 //-------------------------------------------------------------------------------------------------
-const Class& DictionaryProperty::keyClass() const
+TypeInfo DictionaryProperty::keyTypeInfo() const
 {
-    return getKeyClass();
+    return m_keyTypeInfo;
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -60,9 +63,9 @@ Type DictionaryProperty::elementType() const
 }
 
 //-------------------------------------------------------------------------------------------------
-const Class& DictionaryProperty::elementClass() const
+TypeInfo DictionaryProperty::elementTypeInfo() const
 {
-    return getElementClass();
+    return m_elementTypeInfo;
 }
 
 //-------------------------------------------------------------------------------------------------
