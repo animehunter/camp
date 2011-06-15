@@ -86,9 +86,12 @@ set(CAMP_SRCS
     include/camp/classcast.hpp
     src/classcast.cpp
     include/camp/type.hpp
+	include/camp/typeinfo.hpp
+    src/typeinfo.cpp
     include/camp/enumget.hpp
     include/camp/enumget.inl
     include/camp/constructor.hpp
+	src/constructor.cpp
     include/camp/config.hpp
     include/camp/classget.hpp
     include/camp/classget.inl

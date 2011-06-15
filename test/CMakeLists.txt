@@ -41,6 +41,8 @@ set(CAMP_TEST_SRCS
     enumobject.hpp
     enumproperty.cpp
     enumproperty.hpp
+	function.hpp
+	function.cpp
     tagholder.cpp
     tagholder.hpp
     value.cpp
