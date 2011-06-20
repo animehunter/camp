@@ -71,6 +71,8 @@ struct ValueMapper<QString>
     {
         return QString::fromStdString(ValueMapper<std::string>::from(source));
     }
+
+    static camp::TypeInfo typeInfo() { return camp::stringType; }
 };
 
 } // namespace camp_ext
